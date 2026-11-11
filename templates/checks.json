@@ -1,0 +1,38 @@
+{
+  "server_cmd": "bash scripts/serve_local.sh fresh",
+  "server_stop_cmd": "bash scripts/serve_local.sh stop",
+
+  "always": [
+    "python3 scripts/compliance_check.py"
+  ],
+
+  "map": [
+    { "paths": ["data/**", "build.py", "assets/**", "*.html"], "run": ["python3 build.py", "python3 tests/site.py"] },
+    { "paths": ["assets/*.css"], "run": ["python3 tests/responsive.py --smoke"] },
+    { "paths": ["server/auth*", "server/mfa*", "server/session*"], "run": ["python3 tests/auth_e2e.py"], "server": true },
+    { "paths": ["server/pay*", "server/checkout*", "server/webhook*"], "run": ["python3 tests/payments_e2e.py"], "server": true },
+    { "paths": ["server/upload*", "server/files*"], "run": ["node tests/uploads_unit.mjs"] },
+    { "paths": ["server/schema*"], "run": ["python3 tests/auth_e2e.py", "python3 tests/roles_e2e.py"], "server": true }
+  ],
+
+  "full": [
+    { "name": "Build", "run": "python3 build.py && bash scripts/build.sh" },
+    { "name": "Compliance and security", "run": "python3 scripts/compliance_check.py" },
+    { "name": "Public site", "run": "python3 tests/site.py" },
+    { "name": "Accounts and sign in", "run": "python3 tests/auth_e2e.py", "server": true },
+    { "name": "Roles and object access", "run": "python3 tests/roles_e2e.py", "server": true },
+    { "name": "Payments (test keys)", "run": "python3 tests/payments_e2e.py", "server": true },
+    { "name": "Screen sizes", "run": "python3 tests/responsive.py", "server": true, "timeout": 2400 },
+    { "name": "Lighthouse", "run": "bash scripts/lighthouse.sh", "server": true }
+  ],
+
+  "compliance": {
+    "public_html": ["*.html", "pages/**/*.html"],
+    "headers_files": ["_headers"],
+    "code_dirs": ["server", "functions", "assets"],
+    "schema_files": ["server/schema.js"],
+    "host_allowlist": ["schema.org", "w3.org", "example.com", "fonts.googleapis.com", "fonts.gstatic.com"],
+    "pages_without_privacy_link": ["404.html"],
+    "baseline": "tests/eval/compliance_baseline.json"
+  }
+}

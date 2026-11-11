@@ -1,0 +1,18 @@
+# Build and local state
+dist/
+node_modules/
+.wrangler/
+.deploy/
+__pycache__/
+*.pyc
+tests/screens/
+tests/eval/lighthouse/
+tests/eval/report.*
+
+# Local secrets never go in Git (real secrets live in the platform secret store)
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+*.pem
+*.key
