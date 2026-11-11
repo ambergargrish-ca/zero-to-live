@@ -33,10 +33,15 @@ zero-to-live/
 │   ├── lighthouse.sh                Lighthouse with pass/fail thresholds
 │   ├── make_routes.py               Cloudflare _routes.json for static files
 │   └── deploy_batch.sh              batch counter, build budget, test gate
-└── templates/
-    ├── checks.json                  test map and suite config
-    ├── _headers                     security headers starting point
-    └── gitignore
+├── templates/
+│   ├── checks.json                  test map and suite config
+│   ├── _headers                     security headers starting point
+│   └── gitignore
+└── project/                         project management view of the case study
+    ├── README.md                    timeline, hierarchy, how to import
+    ├── BACKLOG.md                   14 epics, 54 stories, 144 sub-tasks
+    ├── BUGS.md                      32 bugs with root cause and prevention
+    └── backlog.csv                  Jira-importable backlog
 ```
 
 ## Install
@@ -76,6 +81,8 @@ Along the way it shaped:
 - Lighthouse Accessibility 100 across key pages, with mobile Performance in the 85 to 100 range
 - a security review whose fixed findings became the object-level authorization, session and capacity-abuse items in the checklist
 - batched deploys that keep a growing platform well inside the free plan's monthly build limit
+
+For the product view of the build (epics, features, user stories, sub-tasks and every bug with its root cause), see [project/](project/README.md). The CSV imports straight into Jira.
 
 Built by [Amber Gargrish](https://gargrish.com).
 
