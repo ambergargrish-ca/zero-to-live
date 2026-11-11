@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
 # Run Lighthouse (mobile) on key pages of a local or preview build and check the scores against targets.
 #
 #   bash scripts/lighthouse.sh                         pages from PAGES, against BASE

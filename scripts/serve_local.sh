@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
 # Start a local Cloudflare Pages server (wrangler pages dev) with a local D1 database and R2 bucket, then wait
 # until it answers. Reuses a running server unless "fresh" is given.
 #

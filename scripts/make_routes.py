@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
 """Write dist/_routes.json for Cloudflare Pages so static files are served without invoking Pages Functions.
 
 Without it, every image, stylesheet and script request runs your Function and counts against the request quota.

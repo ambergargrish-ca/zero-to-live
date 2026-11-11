@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
 """Quick tier: run only the checks the current change can affect.
 
 Reads checks.json in the project root (see templates/checks.json):

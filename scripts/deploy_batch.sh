@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
 # Batched deploys: count changes since the last production deploy, track builds used this month, and deploy only
 # when the full tier has passed on the exact commit being shipped.
 #

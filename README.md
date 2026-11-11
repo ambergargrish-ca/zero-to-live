@@ -79,6 +79,33 @@ Along the way it shaped:
 
 Built by [Amber Gargrish](https://gargrish.com).
 
+## Citing
+
+If this skill, its scripts or its checklists help your project, please credit it. GitHub's **Cite this repository** button (right sidebar) gives APA and BibTeX from [CITATION.cff](CITATION.cff).
+
+**APA**
+
+> Gargrish, A. (2026). *zero-to-live: an end-to-end web development skill for Claude* (Version 1.0.0) [Computer software]. https://github.com/ambergargrish-ca/zero-to-live
+
+**BibTeX**
+
+```bibtex
+@software{gargrish_zero_to_live_2026,
+  author  = {Gargrish, Amber},
+  title   = {zero-to-live: an end-to-end web development skill for Claude},
+  year    = {2026},
+  version = {1.0.0},
+  url     = {https://github.com/ambergargrish-ca/zero-to-live},
+  license = {MIT}
+}
+```
+
+**In a project README or credits page**
+
+```markdown
+Built with [zero-to-live](https://github.com/ambergargrish-ca/zero-to-live) by [Amber Gargrish](https://gargrish.com).
+```
+
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). If you copy or adapt the scripts or guides, keep the copyright notice in LICENSE with them.

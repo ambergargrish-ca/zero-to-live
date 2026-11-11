@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
 """Compliance and security check. Run on every change (quick tier) and before every deploy (full tier).
 
 FAILS on things that must never ship:

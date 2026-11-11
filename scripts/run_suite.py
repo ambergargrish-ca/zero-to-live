@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
 """Full tier: run every suite once, each against a fresh local server and database, and write one report.
 
 Suites come from checks.json under "full":

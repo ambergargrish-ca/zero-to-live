@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this skill, its scripts or its checklists in your work, please cite it as below."
+title: "zero-to-live: an end-to-end web development skill for Claude"
+type: software
+authors:
+  - family-names: Gargrish
+    given-names: Amber
+    website: "https://gargrish.com"
+repository-code: "https://github.com/ambergargrish-ca/zero-to-live"
+abstract: >-
+  A Claude skill for taking a website or web app from idea to production:
+  planning, static-first building, tiered testing (quick checks vs full suite),
+  accessibility and Lighthouse targets, a security and privacy checklist, and
+  batched deploys. Cloudflare Pages, D1 and R2 as the preferred stack, with
+  notes for alternatives. Built and proven on Get In Tech (getintech.ca).
+keywords:
+  - claude-skill
+  - web-development
+  - cloudflare-pages
+  - testing
+  - accessibility
+  - web-security
+  - deployment
+license: MIT
+version: 1.0.0
+date-released: "2026-11-11"
