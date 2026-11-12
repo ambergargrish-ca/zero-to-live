@@ -33,6 +33,7 @@
     "schema_files": ["server/schema.js"],
     "host_allowlist": ["schema.org", "w3.org", "example.com", "fonts.googleapis.com", "fonts.gstatic.com"],
     "pages_without_privacy_link": ["404.html"],
-    "baseline": "tests/eval/compliance_baseline.json"
+    "baseline": "tests/eval/compliance_baseline.json",
+    "sitemaps": ["sitemap.xml"]
   }
 }

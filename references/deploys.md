@@ -58,6 +58,16 @@ Push feature branches to get preview URLs without touching production. Preview b
 
 Prefer the host's instant rollback for emergencies: it does not use a build and takes seconds.
 
+## Scheduled jobs on the minute
+
+GitHub Actions `schedule` runs often start several minutes late, and cron is in UTC. For something that must happen at an exact local time (publishing a post at 9:00):
+
+- Schedule the job 20 minutes early and have it sleep until the target time, computed in the local time zone (`TZ=America/New_York date -d "today 09:00:05" +%s`).
+- Add two cron lines, one for standard time and one for daylight time. The run that is not near the target that day exits straight away.
+- Skip the wait on manual runs (`workflow_dispatch`) so you can test it.
+- Give the workflow `permissions: {}` and a `timeout-minutes` when it only calls your own endpoint.
+- Keep a slower fallback (an hourly job) that picks up anything the exact-time run missed.
+
 ## Hand-over runbook
 
 Write a short `docs/RUNBOOK.md` for anyone else who may need to ship a fix: how a change reaches production, where each service is managed, how to roll back, and what never to do (delete the database, set dev flags in production, share keys over chat).

@@ -714,3 +714,83 @@ Acceptance criteria:
 Feature: F14.1 Skill and repository. Delivered Nov 11.",Done,Medium,zero-to-live E14 F14.1
 243,242,Sub-task,S054-T1 Reconstruct backlog from history,,Done,Medium,zero-to-live E14
 244,242,Sub-task,S054-T2 Publish under project/,,Done,Medium,zero-to-live E14
+245,85,Story,S055 An account menu on public pages when signed in,"As a signed in learner browsing the public site, I want an account menu instead of ""Sign in"" so that I can jump to my screens without signing in again.
+
+Acceptance criteria:
+- Menu lists only the screens this person's role can use, plus Sign out
+- Visitors who are not signed in make no extra request
+- Nothing shows until the server confirms the session
+- Phone menu gets the same links
+
+Feature: F05.1 Sign up and sign in. Delivered Nov 11.",Done,Medium,zero-to-live E05 F05.1
+246,245,Sub-task,S055-T1 Sign in hint set by the app at sign in and cleared at sign out,,Done,Medium,zero-to-live E05
+247,245,Sub-task,"S055-T2 Account menu with role-based links, hover and keyboard support",,Done,Medium,zero-to-live E05
+248,245,Sub-task,S055-T3 Same links in the phone menu,,Done,Medium,zero-to-live E05
+249,85,Story,"S056 The curriculum builder in Admin, for admins and managers only","As an admin, I want the curriculum builder inside Admin and limited to admins and managers so that the top bar stays short and only staff can change course outlines.
+
+Acceptance criteria:
+- Curricula is a tab in Admin, not a top bar item
+- The API route returns curricula to admins and managers only
+- Old links redirect to the Admin tab
+
+Feature: F05.2 Roles and permissions. Delivered Nov 11.",Done,Medium,zero-to-live E05 F05.2
+250,249,Sub-task,S056-T1 Curricula tab in Admin,,Done,Medium,zero-to-live E05
+251,249,Sub-task,S056-T2 API route limited to staff roles,,Done,Medium,zero-to-live E05
+252,169,Story,S057 Drafts waiting for approval on the bell and Admin badges,"As an admin, I want blog drafts waiting for approval to show on the notification bell and the Admin badges so that no draft misses its publish date.
+
+Acceptance criteria:
+- Bell lists the number of drafts waiting with a link to the Blog tab
+- Admin menu and Blog tab show a badge
+- New draft files are imported before counting
+
+Feature: F09.2 Content. Delivered Nov 11.",Done,Medium,zero-to-live E09 F09.2
+253,252,Sub-task,S057-T1 Count drafts waiting,,Done,Medium,zero-to-live E09
+254,252,Sub-task,S057-T2 Bell item and badges,,Done,Medium,zero-to-live E09
+255,169,Story,S058 Live posts shared to a second developer platform and the company page,"As the product owner, I want each live post copied to a second developer platform and shared on the company page so that it reaches more readers while search engines still credit our site.
+
+Acceptance criteria:
+- Copies set our page as the original URL and use absolute links
+- Company page posting uses its own connection
+- Each platform's result or error shows on the post and can be retried
+- Connections renew before they expire
+
+Feature: F09.2 Content. Delivered Nov 11.",Done,Medium,zero-to-live E09 F09.2
+256,255,Sub-task,S058-T1 Copy to Hashnode with the original URL set,,Done,Medium,zero-to-live E09
+257,255,Sub-task,S058-T2 Company page sharing with its own connection,,Done,Medium,zero-to-live E09
+258,255,Sub-task,S058-T3 Token renewal before expiry,,Done,Medium,zero-to-live E09
+259,255,Sub-task,S058-T4 Per-platform result and error saved on each post,,Done,Medium,zero-to-live E09
+260,169,Story,S059 Approved posts go live at the exact scheduled minute,"As the product owner, I want approved posts to go live at 9:00 local time on the minute so that the share lands when readers are online.
+
+Acceptance criteria:
+- Publishes within a minute of the target time despite late scheduler starts
+- Works in both standard and daylight time
+- Other times are still picked up by the hourly job
+
+Feature: F09.2 Content. Delivered Nov 11.",Done,Medium,zero-to-live E09 F09.2
+261,260,Sub-task,S059-T1 Early-start workflow that waits for the local target time,,Done,Medium,zero-to-live E09
+262,260,Sub-task,S059-T2 Two schedules for standard and daylight time,,Done,Medium,zero-to-live E09
+263,169,Story,S060 Replace an unpublished post's text from a rewritten file,"As an editor, I want to push a rewritten draft file over a post that is not live yet so that a revised draft replaces the old one without losing its approval or publish time.
+
+Acceptance criteria:
+- A raised revision number in the file replaces the text once
+- Status and publish time are kept
+- Live posts are never changed from a file
+
+Feature: F09.2 Content. Delivered Nov 11.",Done,Medium,zero-to-live E09 F09.2
+264,263,Sub-task,S060-T1 Revision field in content files,,Done,Medium,zero-to-live E09
+265,263,Sub-task,"S060-T2 Replace text once per revision, keep status",,Done,Medium,zero-to-live E09
+266,43,Bug,B33 Sitemap listed a page marked noindex,"Found by: Search Console (Nov 12)
+Story: S011
+Root cause: Sitemap was built from the page list without checking each page's robots tag
+Fix: Build drops any noindex page from the sitemap
+Prevention: Compliance check fails when a sitemap lists a noindex page",Done,Medium,zero-to-live E03 seo
+267,85,Bug,B34 Account menu did not reach browsers after release,"Found by: Release check (Nov 11)
+Story: S055
+Root cause: Shared script and stylesheet changed, but the pages that pin their hash were not rebuilt
+Fix: Rebuilt every page so it loads the new files
+Prevention: Compliance check fails on a stale or mismatched asset hash",Done,Medium,zero-to-live E05 functional
+268,169,Bug,B35 Company page connection said 'cancelled' when page posting was not approved yet,"Found by: Integration setup (Nov 11)
+Story: S058
+Root cause: Every sign in error from the provider was shown as a cancellation
+Fix: Permission and approval errors get their own plain message
+Prevention: Integration guide: map provider errors to plain messages",Done,Low,zero-to-live E09 functional

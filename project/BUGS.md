@@ -1,25 +1,26 @@
 # Bug log
 
-32 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
+35 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
 
 ## Summary
 
 | Severity | Count |
 |---|---|
 | High | 5 |
-| Medium | 16 |
-| Low | 11 |
+| Medium | 18 |
+| Low | 12 |
 
 | Type | Count |
 |---|---|
 | Security | 14 |
-| Functional | 6 |
+| Functional | 8 |
 | UI | 5 |
 | Operational | 2 |
 | Performance | 2 |
 | Test | 1 |
 | Accessibility | 1 |
 | Process | 1 |
+| SEO | 1 |
 
 | Found by | Count |
 |---|---|
@@ -41,6 +42,9 @@
 | Audit | 1 |
 | Setup review | 1 |
 | Usage review | 1 |
+| Search Console | 1 |
+| Release check | 1 |
+| Integration setup | 1 |
 
 **Pattern worth noting:** most security findings came from scheduled tests (pen test, audits), most UI bugs from real-phone UAT. Automated suites catch regressions; humans on real devices catch what nobody thought to test.
 
@@ -69,6 +73,8 @@
 | B28 | Accessibility score 96: duplicate image labels and crowded footer links | Medium | Accessibility | S051 | Lighthouse | Nov 11 |
 | B29 | Blank flash and outlined box on every page change | Medium | UI | S009 | Product owner (screen recording) | Nov 11 |
 | B32 | An unscoped audit fanned out to 13 agents and exhausted the usage limit | Medium | Process | S048 | Usage review | Nov 11 |
+| B33 | Sitemap listed a page marked noindex | Medium | SEO | S011 | Search Console | Nov 12 |
+| B34 | Account menu did not reach browsers after release | Medium | Functional | S055 | Release check | Nov 11 |
 | B05 | Form inputs had no length limits | Low | Security | S004 | Pen test | Nov 6 |
 | B06 | Checkout links were not forced to HTTPS | Low | Security | S031 | Pen test | Nov 6 |
 | B11 | Carousel arrow tests failed because the Help button covered it | Low | Test | S046 | Test run | Nov 7 |
@@ -80,6 +86,7 @@
 | B25 | Sign up revealed whether an email already had an account | Low | Security | S021 | Security audit | Nov 11 |
 | B30 | Build dependency had known vulnerabilities | Low | Security | S050 | Audit | Nov 11 |
 | B31 | Hosting setup started on the wrong product (Workers instead of Pages) | Low | Operational | S016 | Setup review | Nov 6 |
+| B35 | Company page connection said 'cancelled' when page posting was not approved yet | Low | Functional | S058 | Integration setup | Nov 11 |
 
 ## Root cause and prevention
 
@@ -338,3 +345,27 @@
 - **Root cause:** No scope or agent cap; full suites after small edits
 - **Fix:** Capped, scoped audits; quick tier for small changes
 - **Prevention:** Testing tiers in the skill
+
+### B33 Sitemap listed a page marked noindex
+
+- **Severity / type:** Medium / SEO  (epic E03, story S011)
+- **Found by:** Search Console, Nov 12
+- **Root cause:** Sitemap was built from the page list without checking each page's robots tag
+- **Fix:** Build drops any noindex page from the sitemap
+- **Prevention:** Compliance check fails when a sitemap lists a noindex page
+
+### B34 Account menu did not reach browsers after release
+
+- **Severity / type:** Medium / Functional  (epic E05, story S055)
+- **Found by:** Release check, Nov 11
+- **Root cause:** Shared script and stylesheet changed, but the pages that pin their hash were not rebuilt
+- **Fix:** Rebuilt every page so it loads the new files
+- **Prevention:** Compliance check fails on a stale or mismatched asset hash
+
+### B35 Company page connection said 'cancelled' when page posting was not approved yet
+
+- **Severity / type:** Low / Functional  (epic E09, story S058)
+- **Found by:** Integration setup, Nov 11
+- **Root cause:** Every sign in error from the provider was shown as a cancellation
+- **Fix:** Permission and approval errors get their own plain message
+- **Prevention:** Integration guide: map provider errors to plain messages

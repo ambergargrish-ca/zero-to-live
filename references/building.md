@@ -34,7 +34,8 @@ A page that bypasses the layout is a compliance bug: it loses the privacy link a
 - **Images:** width and height attributes, `loading="lazy"` below the fold, WebP or AVIF, `srcset` for sizes. Every image has alt text (empty `alt=""` for decorative ones).
 - **Forms:** labels on every field, `maxlength` on every text input, a one-line privacy notice next to the submit button, a bot check (Turnstile, hCaptcha) on public forms.
 - **Fallbacks:** if a font, image CDN or API fails, the page still reads and works. Test it by blocking them.
-- **Fingerprint** CSS and JS (`app.js?v=3f2a9c1b`) at build time, and cache `/assets/*` for a week or more.
+- **Fingerprint** CSS and JS (`app.js?v=3f2a9c1b`) at build time, and cache `/assets/*` for a week or more. After changing a shared asset, rebuild every page that loads it: a page still carrying the old hash keeps serving the old file, so the change never reaches browsers. `scripts/compliance_check.py` fails when a page's hash does not match the file.
+- **Signed-in state on static pages.** To show an account menu instead of "Sign in" without slowing every visit, have the app set a harmless hint in browser storage at sign in (and clear it at sign out). Public pages only call the session endpoint when the hint is there, and show nothing until the server confirms the session. The hint is never trusted for access.
 
 ## SEO and AI-crawler basics
 
@@ -45,7 +46,7 @@ Ship these with the first deploy:
 | `<title>`, meta description | Unique per page, under 60 and 155 characters |
 | `<link rel="canonical">` | One URL per page; use clean URLs (`/courses`, not `/courses.html`) |
 | `robots.txt` | Allow crawlers, list the sitemap; decide explicitly which AI crawlers you allow |
-| `sitemap.xml` | Every indexable page with `lastmod` |
+| `sitemap.xml` | Every indexable page with `lastmod`, and never a page marked `noindex` (search consoles flag the contradiction). Filter the sitemap by each page's robots tag at build time rather than keeping a separate list |
 | `llms.txt` | Plain-text summary of the site and links to key pages for AI agents |
 | JSON-LD | `Organization`, `Person`, `Product`/`Course`, `FAQPage`, `BreadcrumbList` as they apply |
 | `noindex` | On sign-in, dashboards, preview deploy URLs and any `/md/` agent copies |
@@ -59,6 +60,16 @@ Write content that can be cited: a clear first sentence per section that answers
 - Paginate every list; cap admin lists.
 - An audit log row for every privileged action (role change, refund, deletion, export).
 - Edge-cache public reads for a short TTL; never cache anything per user.
+- Hide a screen in the menu **and** tighten its API route to the same role. A hidden link with an open route is not access control.
+
+## Outside integrations
+
+- **Syndicated copies point home.** When a post is copied to another platform, set that platform's canonical or original URL field to your page, and make relative links absolute, so search engines credit your site.
+- **GraphQL errors arrive with HTTP 200.** Parse the body and treat a non-empty `errors` array as a failure; also catch HTML error pages that are not JSON.
+- **Renew OAuth tokens before they expire.** Store refresh tokens encrypted and renew a few days before expiry instead of waiting for a failed call.
+- **Map provider errors to plain messages.** A missing permission or an unapproved API product is not the same as the user cancelling; tell the admin which one happened and what to do.
+- **Record share results per item.** Save each platform's result or error on the item so a failed share can be retried without re-sharing the ones that worked.
+- **Content files import once, revisions on purpose.** If content files seed database records that people then edit, import each file once, and let a raised `revision` number in the file replace an item that is not live yet. Live items are never changed from a file.
 
 ## Build script checklist
 

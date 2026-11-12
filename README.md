@@ -27,7 +27,7 @@ zero-to-live/
 │   └── deploys.md
 ├── scripts/                         reusable, project-agnostic tools
 │   ├── quick_check.py               run only the checks affected by your diff
-│   ├── compliance_check.py          secrets, CSP, headers, SQL safety, privacy drift
+│   ├── compliance_check.py          secrets, CSP, headers, SQL, sitemap, asset hashes, privacy drift
 │   ├── run_suite.py                 full tier with one report
 │   ├── serve_local.sh               local Pages server with D1 and R2
 │   ├── lighthouse.sh                Lighthouse with pass/fail thresholds
@@ -39,8 +39,8 @@ zero-to-live/
 │   └── gitignore
 └── project/                         project management view of the case study
     ├── README.md                    timeline, hierarchy, how to import
-    ├── BACKLOG.md                   14 epics, 54 stories, 144 sub-tasks
-    ├── BUGS.md                      32 bugs with root cause and prevention
+    ├── BACKLOG.md                   14 epics, 60 stories, 159 sub-tasks
+    ├── BUGS.md                      35 bugs with root cause and prevention
     └── backlog.csv                  Jira-importable backlog
 ```
 

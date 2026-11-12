@@ -9,6 +9,9 @@ FAILS on things that must never ship:
   - SQL built by interpolating request data into a query string
   - missing security headers, or a CSP that allows unsafe-eval
   - a public page without a link to the privacy policy
+  - a sitemap that lists a page marked noindex (search consoles flag the contradiction)
+  - a page that loads a fingerprinted asset (app.js?v=<hash>) with an old hash, or pages that
+    disagree on the hash for the same file (some pages were not rebuilt after the asset changed)
 
 WARNS when a change affects privacy, so a person reviews the privacy policy before deploying:
   - new database tables or columns
@@ -20,7 +23,7 @@ Configure in checks.json under "compliance" (all keys optional; see templates/ch
 
   python3 scripts/compliance_check.py            check and report (exit 1 on failures)
   python3 scripts/compliance_check.py --accept   record the current state as reviewed"""
-import json, re, sys
+import hashlib, json, re, sys
 from pathlib import Path
 
 ROOT = Path.cwd()
@@ -36,6 +39,7 @@ DEFAULTS = {
     "privacy_marker": "privacy",
     "pages_without_privacy_link": ["404.html"],
     "baseline": "tests/eval/compliance_baseline.json",
+    "sitemaps": ["sitemap.xml", "dist/sitemap.xml"],
 }
 SECRET = re.compile(r"(sk_live_[0-9a-zA-Z]{10,}|rk_live_[0-9a-zA-Z]{10,}|sk-ant-[0-9a-zA-Z_-]{20,}|sk-[A-Za-z0-9]{40,}"
                     r"|whsec_[0-9a-zA-Z]{20,}|AKIA[0-9A-Z]{16}|ghp_[0-9A-Za-z]{30,}|xox[baprs]-[0-9A-Za-z-]{10,}"
@@ -142,6 +146,61 @@ def hard_checks(cfg):
     (warns if missing else oks).append(".gitignore " + (f"is missing {', '.join(missing)}" if missing else "keeps local secrets out of Git"))
 
 
+NOINDEX = re.compile(r"<meta[^>]+name=[\"']robots[\"'][^>]+content=[\"'][^\"']*noindex", re.I)
+ASSET_REF = re.compile(r"(?:href|src)=[\"'](/?[\w./-]+\.(?:js|mjs|css|png|jpg|jpeg|webp|svg|ico|woff2?))\?v=([0-9a-fA-F]{6,})[\"']")
+
+
+def page_for(loc):
+    """Map a sitemap URL to the HTML file that serves it, or None when it is not a static file here."""
+    path = re.sub(r"^https?://[^/]+", "", loc.strip()).split("?")[0].split("#")[0].strip("/")
+    tries = [path + ".html", path + "/index.html", path] if path else ["index.html"]
+    for base in (ROOT, ROOT / "dist"):
+        for t in tries:
+            f = base / t
+            if f.is_file() and f.suffix == ".html":
+                return f
+    return None
+
+
+def site_checks(cfg):
+    listed = 0
+    for sm in cfg["sitemaps"]:
+        f = ROOT / sm
+        if not f.is_file():
+            continue
+        for loc in re.findall(r"<loc>(.*?)</loc>", read(f), re.S):
+            listed += 1
+            page = page_for(loc)
+            if page and NOINDEX.search(read(page)):
+                fails.append(f"{sm} lists {loc.strip()} but {page.relative_to(ROOT)} is noindex. Leave noindex pages out of the sitemap.")
+    if listed:
+        oks.append(f"Checked {listed} sitemap URLs against noindex pages")
+
+    refs, digests = {}, {}
+    for p in public_pages(cfg):
+        for path, v in ASSET_REF.findall(read(p)):
+            refs.setdefault(path.lstrip("/"), {}).setdefault(v.lower(), []).append(p.relative_to(ROOT))
+    hashed = stale = 0
+    for path, versions in refs.items():
+        f = next((b / path for b in (ROOT, ROOT / "dist") if (b / path).is_file()), None)
+        if f:
+            data = f.read_bytes()
+            digests[path] = [hashlib.new(a, data).hexdigest() for a in ("sha256", "sha1", "md5")]
+            hashed += any(d.startswith(v) for v in versions for d in digests[path])
+        if len(versions) > 1:
+            stale += 1
+            fails.append(f"Pages load {path} with {len(versions)} different ?v= hashes. Rebuild every page after changing it.")
+    # Only judge hashes against file contents when the project fingerprints by content (some reference matches)
+    if hashed:
+        for path, versions in refs.items():
+            for v, pages in versions.items():
+                if path in digests and not any(d.startswith(v) for d in digests[path]):
+                    stale += 1
+                    fails.append(f"{pages[0]} (and {len(pages) - 1} more) load {path}?v={v}, which is not the current file. Rebuild the pages.")
+    if refs and not stale:
+        oks.append(f"Fingerprinted assets are current on every page ({len(refs)} files)")
+
+
 def snapshot(cfg):
     schema = "\n".join(read(ROOT / f) for f in cfg["schema_files"] if (ROOT / f).exists())
     tables = sorted(set(re.findall(r"CREATE TABLE (?:IF NOT EXISTS )?[`\"]?(\w+)", schema, re.I)))
@@ -163,6 +222,7 @@ def snapshot(cfg):
 def main():
     cfg = load_cfg()
     hard_checks(cfg)
+    site_checks(cfg)
     now = snapshot(cfg)
     base_path = ROOT / cfg["baseline"]
     if "--accept" in sys.argv:

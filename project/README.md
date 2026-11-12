@@ -2,15 +2,15 @@
 
 How the case-study platform behind this skill was planned and delivered, as a product backlog: epics, features, user stories, sub-tasks and bugs.
 
-The platform went from a static launch site to a full learning and careers platform (accounts, dashboards, learning portal, payments, job board, support, blog) in **7 days and 96 commits** (Nov 5 to 11, 2026), with Claude doing most of the engineering and a product owner setting scope, priorities and release gates.
+The platform went from a static launch site to a full learning and careers platform (accounts, dashboards, learning portal, payments, job board, support, blog) in **8 days and 108 commits** (Nov 5 to 12, 2026), with Claude doing most of the engineering and a product owner setting scope, priorities and release gates.
 
 | | Count |
 |---|---|
 | Epics | 14 |
 | Features | 24 |
-| User stories | 54 |
-| Sub-tasks | 144 |
-| Bugs found and fixed | 32 |
+| User stories | 60 |
+| Sub-tasks | 159 |
+| Bugs found and fixed | 35 |
 | Automated checks passing before release | 1,298 |
 
 ## Files
@@ -42,7 +42,8 @@ Each story has acceptance criteria written as checks, so "done" means the criter
 | Nov 7 | Checkout, tax and local currency, certificates, roles, notifications, help and support, portal dark theme | E05, E06, E07, E09 |
 | Nov 9 | Responsive audit (16 screen sizes), job board, search, insights dashboard | E08, E09, E11 |
 | Nov 10 | Career profiles, applicant tracking, consent and policies, evaluation kit, two-step sign in, recordings on free storage | E05, E06, E08, E10, E11 |
-| Nov 11 | Performance round, two security audits, retention and data export, blog, zero-to-live skill | E09, E10, E12, E13, E14 |
+| Nov 11 | Performance round, two security audits, retention and data export, blog with approval badges, wider sharing and exact-time publishing, account menu on public pages, zero-to-live skill | E05, E09, E10, E12, E13, E14 |
+| Nov 12 | Sitemap leaves out noindex pages | E03 |
 
 ## How the work was run
 

@@ -1,6 +1,6 @@
 # Backlog
 
-14 epics, 24 features, 54 user stories, 144 sub-tasks and 32 bugs. All items are **Done**.
+14 epics, 24 features, 60 user stories, 159 sub-tasks and 35 bugs. All items are **Done**.
 Bugs are listed under the story where they were found and in full in [BUGS.md](BUGS.md).
 
 ## Epics
@@ -9,13 +9,13 @@ Bugs are listed under the story where they were found and in full in [BUGS.md](B
 |---|---|---|---|---|---|
 | [E01 Launch site](#e01-launch-site) | Ship a fast, credible public site so visitors can find courses and register interest. | 2 | 5 | 2 | Nov 5 to 6 |
 | [E02 Brand and design system](#e02-brand-and-design-system) | A consistent, accessible visual identity across site, portal and email. | 2 | 5 | 1 | Nov 6 to 10 |
-| [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 5 | 1 | Nov 6 to 10 |
+| [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 5 | 2 | Nov 6 to 12 |
 | [E04 Hosting, CI and deploys](#e04-hosting-ci-and-deploys) | Free, reliable hosting with controlled, countable releases. | 2 | 5 | 4 | Nov 6 to 11 |
-| [E05 Accounts and access](#e05-accounts-and-access) | Safe sign in with the right access for every role. | 2 | 5 | 6 | Nov 6 to 11 |
+| [E05 Accounts and access](#e05-accounts-and-access) | Safe sign in with the right access for every role. | 2 | 7 | 7 | Nov 6 to 11 |
 | [E06 Learning platform](#e06-learning-platform) | Everything a learner and instructor need to run a live course. | 2 | 5 | 3 | Nov 6 to 10 |
 | [E07 Commerce](#e07-commerce) | Take payment safely and fairly, in the buyer's currency. | 2 | 4 | 3 | Nov 6 to 11 |
 | [E08 Careers marketplace](#e08-careers-marketplace) | Connect learners and employers with real Canadian AI and tech jobs. | 2 | 4 | 2 | Nov 7 to 10 |
-| [E09 Support and engagement](#e09-support-and-engagement) | Help visitors fast and keep them coming back. | 2 | 3 | 1 | Nov 7 to 11 |
+| [E09 Support and engagement](#e09-support-and-engagement) | Help visitors fast and keep them coming back. | 2 | 7 | 2 | Nov 7 to 11 |
 | [E10 Privacy and compliance](#e10-privacy-and-compliance) | Collect only what we need, keep it only as long as stated, and prove it. | 2 | 4 | 0 | Nov 10 to 11 |
 | [E11 Quality engineering](#e11-quality-engineering) | Know the product works before anyone else finds out it doesn't. | 1 | 3 | 3 | Nov 6 to 11 |
 | [E12 Security](#e12-security) | Find and fix weaknesses before attackers do. | 1 | 2 | 3 | Nov 6 to 11 |
@@ -202,7 +202,7 @@ As a visitor, I want relevant photography with credits so that pages feel real, 
 ## E03 SEO and AI-engine readiness
 
 **Goal:** Be found and cited by search engines and AI assistants.  
-**Delivered:** Nov 6 to 10
+**Delivered:** Nov 6 to 12
 
 ### F03.1 Crawlability and structured data
 
@@ -221,6 +221,10 @@ As a search engine, I want clean URLs, a sitemap and per-page metadata so that e
 - [x] S011-T1 Per-page metadata in the layout
 - [x] S011-T2 Generate sitemap at build
 - [x] S011-T3 Redirect .html to clean URLs
+
+**Bugs found**
+
+- B33 (Medium, SEO): Sitemap listed a page marked noindex
 
 #### S012  ·  Done  ·  Nov 6
 
@@ -444,6 +448,27 @@ As a staff member, I want two-step sign in with an authenticator app so that my 
 
 - B19 (Medium, Security): Turning on two-step sign in didn't end sessions opened with only a password
 
+#### S055  ·  Done  ·  Nov 11
+
+As a signed in learner browsing the public site, I want an account menu instead of "Sign in" so that I can jump to my screens without signing in again.
+
+**Acceptance criteria**
+
+- [x] Menu lists only the screens this person's role can use, plus Sign out
+- [x] Visitors who are not signed in make no extra request
+- [x] Nothing shows until the server confirms the session
+- [x] Phone menu gets the same links
+
+**Sub-tasks**
+
+- [x] S055-T1 Sign in hint set by the app at sign in and cleared at sign out
+- [x] S055-T2 Account menu with role-based links, hover and keyboard support
+- [x] S055-T3 Same links in the phone menu
+
+**Bugs found**
+
+- B34 (Medium, Functional): Account menu did not reach browsers after release
+
 ### F05.2 Roles and permissions
 
 #### S024  ·  Done  ·  Nov 6 to 11
@@ -480,6 +505,21 @@ As an employee, I want one employee sign in so that my screens follow the role t
 
 - [x] S025-T1 Employee sign in page
 - [x] S025-T2 Role mapping
+
+#### S056  ·  Done  ·  Nov 11
+
+As an admin, I want the curriculum builder inside Admin and limited to admins and managers so that the top bar stays short and only staff can change course outlines.
+
+**Acceptance criteria**
+
+- [x] Curricula is a tab in Admin, not a top bar item
+- [x] The API route returns curricula to admins and managers only
+- [x] Old links redirect to the Admin tab
+
+**Sub-tasks**
+
+- [x] S056-T1 Curricula tab in Admin
+- [x] S056-T2 API route limited to staff roles
 
 ## E06 Learning platform
 
@@ -793,6 +833,73 @@ As the product owner, I want a blog with an approval step and auto-sharing so th
 - [x] S041-T1 Blog pages
 - [x] S041-T2 Approval workflow
 - [x] S041-T3 Share integrations
+
+#### S057  ·  Done  ·  Nov 11
+
+As an admin, I want blog drafts waiting for approval to show on the notification bell and the Admin badges so that no draft misses its publish date.
+
+**Acceptance criteria**
+
+- [x] Bell lists the number of drafts waiting with a link to the Blog tab
+- [x] Admin menu and Blog tab show a badge
+- [x] New draft files are imported before counting
+
+**Sub-tasks**
+
+- [x] S057-T1 Count drafts waiting
+- [x] S057-T2 Bell item and badges
+
+#### S058  ·  Done  ·  Nov 11
+
+As the product owner, I want each live post copied to a second developer platform and shared on the company page so that it reaches more readers while search engines still credit our site.
+
+**Acceptance criteria**
+
+- [x] Copies set our page as the original URL and use absolute links
+- [x] Company page posting uses its own connection
+- [x] Each platform's result or error shows on the post and can be retried
+- [x] Connections renew before they expire
+
+**Sub-tasks**
+
+- [x] S058-T1 Copy to Hashnode with the original URL set
+- [x] S058-T2 Company page sharing with its own connection
+- [x] S058-T3 Token renewal before expiry
+- [x] S058-T4 Per-platform result and error saved on each post
+
+**Bugs found**
+
+- B35 (Low, Functional): Company page connection said 'cancelled' when page posting was not approved yet
+
+#### S059  ·  Done  ·  Nov 11
+
+As the product owner, I want approved posts to go live at 9:00 local time on the minute so that the share lands when readers are online.
+
+**Acceptance criteria**
+
+- [x] Publishes within a minute of the target time despite late scheduler starts
+- [x] Works in both standard and daylight time
+- [x] Other times are still picked up by the hourly job
+
+**Sub-tasks**
+
+- [x] S059-T1 Early-start workflow that waits for the local target time
+- [x] S059-T2 Two schedules for standard and daylight time
+
+#### S060  ·  Done  ·  Nov 11
+
+As an editor, I want to push a rewritten draft file over a post that is not live yet so that a revised draft replaces the old one without losing its approval or publish time.
+
+**Acceptance criteria**
+
+- [x] A raised revision number in the file replaces the text once
+- [x] Status and publish time are kept
+- [x] Live posts are never changed from a file
+
+**Sub-tasks**
+
+- [x] S060-T1 Revision field in content files
+- [x] S060-T2 Replace text once per revision, keep status
 
 ## E10 Privacy and compliance
 
