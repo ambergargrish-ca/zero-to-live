@@ -30,7 +30,8 @@ Record these in your performance notes so nobody chases them:
 - [ ] Every image has alt text; decorative images use `alt=""`; no duplicate labels on adjacent links
 - [ ] Tap targets at least 24 by 24 CSS px (44 preferred), with spacing between neighbours
 - [ ] No content only conveyed by colour
-- [ ] Motion respects `prefers-reduced-motion`
+- [ ] Motion respects `prefers-reduced-motion`; count-ups and staged reveals are skipped, and the final value is already in the HTML
+- [ ] Custom controls (quiz options, tabs, toggle buttons, a dialog's close button, checklist boxes) each get a `:focus-visible` style; toggles set `aria-pressed` or `aria-selected`, and text revealed by a click lands in an `aria-live` region
 - [ ] Dialogs trap focus and return it on close
 - [ ] Skip link and other off-screen helpers hidden until focused (a skip link that shows on every page load looks like a bug)
 

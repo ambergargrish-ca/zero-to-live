@@ -1,24 +1,24 @@
 # Bug log
 
-35 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
+38 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
 
 ## Summary
 
 | Severity | Count |
 |---|---|
 | High | 5 |
-| Medium | 18 |
-| Low | 12 |
+| Medium | 19 |
+| Low | 14 |
 
 | Type | Count |
 |---|---|
 | Security | 14 |
-| Functional | 8 |
+| Functional | 10 |
 | UI | 5 |
 | Operational | 2 |
 | Performance | 2 |
+| Accessibility | 2 |
 | Test | 1 |
-| Accessibility | 1 |
 | Process | 1 |
 | SEO | 1 |
 
@@ -29,11 +29,11 @@
 | Lighthouse | 3 |
 | UAT on phone | 2 |
 | Live smoke test | 2 |
+| Product owner review | 2 |
 | Product owner on phone | 1 |
 | Test run | 1 |
 | Header check | 1 |
 | Responsive audit | 1 |
-| Product owner review | 1 |
 | Feature test | 1 |
 | UAT | 1 |
 | UAT on iPhone | 1 |
@@ -45,6 +45,8 @@
 | Search Console | 1 |
 | Release check | 1 |
 | Integration setup | 1 |
+| Admin use | 1 |
+| Design review | 1 |
 
 **Pattern worth noting:** most security findings came from scheduled tests (pen test, audits), most UI bugs from real-phone UAT. Automated suites catch regressions; humans on real devices catch what nobody thought to test.
 
@@ -75,6 +77,7 @@
 | B32 | An unscoped audit fanned out to 13 agents and exhausted the usage limit | Medium | Process | S048 | Usage review | Nov 11 |
 | B33 | Sitemap listed a page marked noindex | Medium | SEO | S011 | Search Console | Nov 12 |
 | B34 | Account menu did not reach browsers after release | Medium | Functional | S055 | Release check | Nov 11 |
+| B36 | A rewritten draft file kept the old publish time | Medium | Functional | S060 | Product owner review | Nov 12 |
 | B05 | Form inputs had no length limits | Low | Security | S004 | Pen test | Nov 6 |
 | B06 | Checkout links were not forced to HTTPS | Low | Security | S031 | Pen test | Nov 6 |
 | B11 | Carousel arrow tests failed because the Help button covered it | Low | Test | S046 | Test run | Nov 7 |
@@ -87,6 +90,8 @@
 | B30 | Build dependency had known vulnerabilities | Low | Security | S050 | Audit | Nov 11 |
 | B31 | Hosting setup started on the wrong product (Workers instead of Pages) | Low | Operational | S016 | Setup review | Nov 6 |
 | B35 | Company page connection said 'cancelled' when page posting was not approved yet | Low | Functional | S058 | Integration setup | Nov 11 |
+| B37 | Admin cover field rejected the site's own cover images | Low | Functional | S062 | Admin use | Nov 12 |
+| B38 | New blog controls had no focus rings and used one-off colours | Low | Accessibility | S062 | Design review | Nov 12 |
 
 ## Root cause and prevention
 
@@ -369,3 +374,27 @@
 - **Root cause:** Every sign in error from the provider was shown as a cancellation
 - **Fix:** Permission and approval errors get their own plain message
 - **Prevention:** Integration guide: map provider errors to plain messages
+
+### B36 A rewritten draft file kept the old publish time
+
+- **Severity / type:** Medium / Functional  (epic E09, story S060)
+- **Found by:** Product owner review, Nov 12
+- **Root cause:** A raised revision replaced the text fields but deliberately kept the stored publish time, so a reschedule made in the file was ignored
+- **Fix:** A revision now carries the file's publish time along with the text
+- **Prevention:** Integration guide: a revision replaces every field the file controls
+
+### B37 Admin cover field rejected the site's own cover images
+
+- **Severity / type:** Low / Functional  (epic E09, story S062)
+- **Found by:** Admin use, Nov 12
+- **Root cause:** The field was type="url", which browsers only accept as a full web address, so site paths like /assets/blog/... failed validation
+- **Fix:** Text field with a URL keyboard and a pattern for the image host and site paths, matched by the server
+- **Prevention:** Front-end rule: use a pattern, not type="url", when site paths are valid
+
+### B38 New blog controls had no focus rings and used one-off colours
+
+- **Severity / type:** Low / Accessibility  (epic E09, story S062)
+- **Found by:** Design review, Nov 12
+- **Root cause:** Quiz options, tabs, the image dialog close button, checklist boxes and the contents menu were added without focus-visible styles or tokens
+- **Fix:** Focus rings on every custom control, colours moved to tokens, one container per diagram
+- **Prevention:** Accessibility checklist: every custom control gets a focus-visible style

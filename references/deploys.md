@@ -67,6 +67,7 @@ GitHub Actions `schedule` runs often start several minutes late, and cron is in 
 - Skip the wait on manual runs (`workflow_dispatch`) so you can test it.
 - Give the workflow `permissions: {}` and a `timeout-minutes` when it only calls your own endpoint.
 - Keep a slower fallback (an hourly job) that picks up anything the exact-time run missed.
+- Have the endpoint return what each step of the job did (items published, the next one due, and the error message rather than a bare `error: true`), and print that response in the workflow log, so a run that did nothing can be traced without opening the database.
 
 ## Hand-over runbook
 

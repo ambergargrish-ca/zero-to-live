@@ -769,11 +769,11 @@ Acceptance criteria:
 Feature: F09.2 Content. Delivered Nov 11.",Done,Medium,zero-to-live E09 F09.2
 261,260,Sub-task,S059-T1 Early-start workflow that waits for the local target time,,Done,Medium,zero-to-live E09
 262,260,Sub-task,S059-T2 Two schedules for standard and daylight time,,Done,Medium,zero-to-live E09
-263,169,Story,S060 Replace an unpublished post's text from a rewritten file,"As an editor, I want to push a rewritten draft file over a post that is not live yet so that a revised draft replaces the old one without losing its approval or publish time.
+263,169,Story,S060 Replace an unpublished post's text from a rewritten file,"As an editor, I want to push a rewritten draft file over a post that is not live yet so that a revised draft replaces the old one without losing its approval.
 
 Acceptance criteria:
 - A raised revision number in the file replaces the text once
-- Status and publish time are kept
+- Status is kept and the publish time follows the file
 - Live posts are never changed from a file
 
 Feature: F09.2 Content. Delivered Nov 11.",Done,Medium,zero-to-live E09 F09.2
@@ -794,3 +794,77 @@ Story: S058
 Root cause: Every sign in error from the provider was shown as a cancellation
 Fix: Permission and approval errors get their own plain message
 Prevention: Integration guide: map provider errors to plain messages",Done,Low,zero-to-live E09 functional
+269,169,Story,"S061 Articles with photos, walkthroughs, quick checks and checklists","As a reader, I want articles with photos, step-by-step walkthroughs, quick checks and checklists so that I can follow and test what I read instead of skimming a wall of text.
+
+Acceptance criteria:
+- Cover and inline photos carry the photographer credit and open full size on click
+- Walkthroughs, quick checks and checklists read as plain HTML without JavaScript
+- Ticked checklist items are remembered on the reader's device
+- Reading progress bar, and an 'On this page' menu for articles with 3 or more sections
+- Copies on developer platforms get a numbered list, a question with its answer and a task list
+
+Feature: F09.2 Content. Delivered Nov 12.",Done,Medium,zero-to-live E09 F09.2
+270,269,Sub-task,S061-T1 Cover and inline image syntax with photographer credit,,Done,Medium,zero-to-live E09
+271,269,Sub-task,S061-T2 Click-to-enlarge image dialog,,Done,Medium,zero-to-live E09
+272,269,Sub-task,"S061-T3 Steps, quiz and checklist blocks rendered on the server",,Done,Medium,zero-to-live E09
+273,269,Sub-task,S061-T4 Reading progress bar and contents menu,,Done,Medium,zero-to-live E09
+274,269,Sub-task,S061-T5 Fallbacks for syndicated copies,,Done,Medium,zero-to-live E09
+275,169,Story,S062 Diagrams drawn by the site and branded covers,"As the product owner, I want workflow, comparison and statistics diagrams drawn by the site and a branded cover for every article so that posts look consistent and stay sharp without designing images by hand.
+
+Acceptance criteria:
+- Flow, compare and stats text blocks become HTML diagrams in the brand style
+- Animations are skipped under reduced motion and every control has a focus ring
+- A cover generator renders the title and a mini workflow into a 2:1 image
+- Authors can choose the cover's workflow labels; long labels are cut at a word boundary
+- The cover is used for previews and lists, not repeated above the title
+
+Feature: F09.2 Content. Delivered Nov 12.",Done,Medium,zero-to-live E09 F09.2
+276,275,Sub-task,"S062-T1 Flow, compare and stats blocks as HTML and CSS",,Done,Medium,zero-to-live E09
+277,275,Sub-task,S062-T2 Reduced motion and keyboard support,,Done,Medium,zero-to-live E09
+278,275,Sub-task,S062-T3 Cover generator with a headless browser,,Done,Medium,zero-to-live E09
+279,275,Sub-task,S062-T4 Cover workflow override and label trimming,,Done,Medium,zero-to-live E09
+280,275,Sub-task,"S062-T5 Design floor pass: focus rings, colour tokens, one container per diagram",,Done,Medium,zero-to-live E09
+281,43,Story,S063 Each article has its own share image,"As a reader seeing a shared link, I want the preview to show the article's own image so that I can tell what the article is about before I click.
+
+Acceptance criteria:
+- og:image, twitter:image and og:image:alt set per article
+- Image address is absolute and sized for link previews
+- The same image is in the article's JSON-LD
+
+Feature: F03.1 Crawlability and structured data. Delivered Nov 12.",Done,Medium,zero-to-live E03 F03.1
+282,281,Sub-task,S063-T1 Per-article image tags in the server-rendered page,,Done,Medium,zero-to-live E03
+283,281,Sub-task,S063-T2 Absolute URL and preview sizing,,Done,Medium,zero-to-live E03
+284,281,Sub-task,S063-T3 Image in the article JSON-LD,,Done,Medium,zero-to-live E03
+285,169,Story,S064 Shared posts show the cover on the link card,"As the product owner, I want posts shared through the social network's API to show the article cover on the link card so that the share stands out in the feed.
+
+Acceptance criteria:
+- The cover, or the site's default share image, is uploaded and attached as the card thumbnail
+- If the upload fails, the post still goes out without it
+
+Feature: F09.2 Content. Delivered Nov 12.",Done,Medium,zero-to-live E09 F09.2
+286,285,Sub-task,S064-T1 Upload the image through the network's image API,,Done,Medium,zero-to-live E09
+287,285,Sub-task,S064-T2 Attach it as the link card thumbnail with a fallback,,Done,Medium,zero-to-live E09
+288,169,Story,S065 Scheduled job log shows what the blog step did,"As the product owner, I want the hourly job's log to show what the blog step did so that a post that did not go out can be traced without opening the database.
+
+Acceptance criteria:
+- Log shows drafts imported, posts published and the next approved post's time
+- Errors show their message, not just a flag
+
+Feature: F09.2 Content. Delivered Nov 12.",Done,Medium,zero-to-live E09 F09.2
+289,288,Sub-task,S065-T1 Return the blog step's result from the scheduled endpoint,,Done,Medium,zero-to-live E09
+290,288,Sub-task,S065-T2 Error message in the result,,Done,Medium,zero-to-live E09
+291,169,Bug,B36 A rewritten draft file kept the old publish time,"Found by: Product owner review (Nov 12)
+Story: S060
+Root cause: A raised revision replaced the text fields but deliberately kept the stored publish time, so a reschedule made in the file was ignored
+Fix: A revision now carries the file's publish time along with the text
+Prevention: Integration guide: a revision replaces every field the file controls",Done,Medium,zero-to-live E09 functional
+292,169,Bug,B37 Admin cover field rejected the site's own cover images,"Found by: Admin use (Nov 12)
+Story: S062
+Root cause: The field was type=""url"", which browsers only accept as a full web address, so site paths like /assets/blog/... failed validation
+Fix: Text field with a URL keyboard and a pattern for the image host and site paths, matched by the server
+Prevention: Front-end rule: use a pattern, not type=""url"", when site paths are valid",Done,Low,zero-to-live E09 functional
+293,169,Bug,B38 New blog controls had no focus rings and used one-off colours,"Found by: Design review (Nov 12)
+Story: S062
+Root cause: Quiz options, tabs, the image dialog close button, checklist boxes and the contents menu were added without focus-visible styles or tokens
+Fix: Focus rings on every custom control, colours moved to tokens, one container per diagram
+Prevention: Accessibility checklist: every custom control gets a focus-visible style",Done,Low,zero-to-live E09 accessibility

@@ -1,6 +1,6 @@
 # Backlog
 
-14 epics, 24 features, 60 user stories, 159 sub-tasks and 35 bugs. All items are **Done**.
+14 epics, 24 features, 65 user stories, 176 sub-tasks and 38 bugs. All items are **Done**.
 Bugs are listed under the story where they were found and in full in [BUGS.md](BUGS.md).
 
 ## Epics
@@ -9,13 +9,13 @@ Bugs are listed under the story where they were found and in full in [BUGS.md](B
 |---|---|---|---|---|---|
 | [E01 Launch site](#e01-launch-site) | Ship a fast, credible public site so visitors can find courses and register interest. | 2 | 5 | 2 | Nov 5 to 6 |
 | [E02 Brand and design system](#e02-brand-and-design-system) | A consistent, accessible visual identity across site, portal and email. | 2 | 5 | 1 | Nov 6 to 10 |
-| [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 5 | 2 | Nov 6 to 12 |
+| [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 6 | 2 | Nov 6 to 12 |
 | [E04 Hosting, CI and deploys](#e04-hosting-ci-and-deploys) | Free, reliable hosting with controlled, countable releases. | 2 | 5 | 4 | Nov 6 to 11 |
 | [E05 Accounts and access](#e05-accounts-and-access) | Safe sign in with the right access for every role. | 2 | 7 | 7 | Nov 6 to 11 |
 | [E06 Learning platform](#e06-learning-platform) | Everything a learner and instructor need to run a live course. | 2 | 5 | 3 | Nov 6 to 10 |
 | [E07 Commerce](#e07-commerce) | Take payment safely and fairly, in the buyer's currency. | 2 | 4 | 3 | Nov 6 to 11 |
 | [E08 Careers marketplace](#e08-careers-marketplace) | Connect learners and employers with real Canadian AI and tech jobs. | 2 | 4 | 2 | Nov 7 to 10 |
-| [E09 Support and engagement](#e09-support-and-engagement) | Help visitors fast and keep them coming back. | 2 | 7 | 2 | Nov 7 to 11 |
+| [E09 Support and engagement](#e09-support-and-engagement) | Help visitors fast and keep them coming back. | 2 | 11 | 5 | Nov 7 to 12 |
 | [E10 Privacy and compliance](#e10-privacy-and-compliance) | Collect only what we need, keep it only as long as stated, and prove it. | 2 | 4 | 0 | Nov 10 to 11 |
 | [E11 Quality engineering](#e11-quality-engineering) | Know the product works before anyone else finds out it doesn't. | 1 | 3 | 3 | Nov 6 to 11 |
 | [E12 Security](#e12-security) | Find and fix weaknesses before attackers do. | 1 | 2 | 3 | Nov 6 to 11 |
@@ -259,6 +259,22 @@ As a search engine, I want structured data so that courses, people and FAQs show
 **Bugs found**
 
 - B02 (Medium, Security): JSON-LD could be broken out of by content containing '</'
+
+#### S063  ·  Done  ·  Nov 12
+
+As a reader seeing a shared link, I want the preview to show the article's own image so that I can tell what the article is about before I click.
+
+**Acceptance criteria**
+
+- [x] og:image, twitter:image and og:image:alt set per article
+- [x] Image address is absolute and sized for link previews
+- [x] The same image is in the article's JSON-LD
+
+**Sub-tasks**
+
+- [x] S063-T1 Per-article image tags in the server-rendered page
+- [x] S063-T2 Absolute URL and preview sizing
+- [x] S063-T3 Image in the article JSON-LD
 
 ### F03.2 Migration hygiene
 
@@ -779,7 +795,7 @@ As an employer, I want Easy Apply and an applicant tracker so that I can manage 
 ## E09 Support and engagement
 
 **Goal:** Help visitors fast and keep them coming back.  
-**Delivered:** Nov 7 to 11
+**Delivered:** Nov 7 to 12
 
 ### F09.1 Help and support
 
@@ -888,18 +904,95 @@ As the product owner, I want approved posts to go live at 9:00 local time on the
 
 #### S060  ·  Done  ·  Nov 11
 
-As an editor, I want to push a rewritten draft file over a post that is not live yet so that a revised draft replaces the old one without losing its approval or publish time.
+As an editor, I want to push a rewritten draft file over a post that is not live yet so that a revised draft replaces the old one without losing its approval.
 
 **Acceptance criteria**
 
 - [x] A raised revision number in the file replaces the text once
-- [x] Status and publish time are kept
+- [x] Status is kept and the publish time follows the file
 - [x] Live posts are never changed from a file
 
 **Sub-tasks**
 
 - [x] S060-T1 Revision field in content files
 - [x] S060-T2 Replace text once per revision, keep status
+
+**Bugs found**
+
+- B36 (Medium, Functional): A rewritten draft file kept the old publish time
+
+#### S061  ·  Done  ·  Nov 12
+
+As a reader, I want articles with photos, step-by-step walkthroughs, quick checks and checklists so that I can follow and test what I read instead of skimming a wall of text.
+
+**Acceptance criteria**
+
+- [x] Cover and inline photos carry the photographer credit and open full size on click
+- [x] Walkthroughs, quick checks and checklists read as plain HTML without JavaScript
+- [x] Ticked checklist items are remembered on the reader's device
+- [x] Reading progress bar, and an 'On this page' menu for articles with 3 or more sections
+- [x] Copies on developer platforms get a numbered list, a question with its answer and a task list
+
+**Sub-tasks**
+
+- [x] S061-T1 Cover and inline image syntax with photographer credit
+- [x] S061-T2 Click-to-enlarge image dialog
+- [x] S061-T3 Steps, quiz and checklist blocks rendered on the server
+- [x] S061-T4 Reading progress bar and contents menu
+- [x] S061-T5 Fallbacks for syndicated copies
+
+#### S062  ·  Done  ·  Nov 12
+
+As the product owner, I want workflow, comparison and statistics diagrams drawn by the site and a branded cover for every article so that posts look consistent and stay sharp without designing images by hand.
+
+**Acceptance criteria**
+
+- [x] Flow, compare and stats text blocks become HTML diagrams in the brand style
+- [x] Animations are skipped under reduced motion and every control has a focus ring
+- [x] A cover generator renders the title and a mini workflow into a 2:1 image
+- [x] Authors can choose the cover's workflow labels; long labels are cut at a word boundary
+- [x] The cover is used for previews and lists, not repeated above the title
+
+**Sub-tasks**
+
+- [x] S062-T1 Flow, compare and stats blocks as HTML and CSS
+- [x] S062-T2 Reduced motion and keyboard support
+- [x] S062-T3 Cover generator with a headless browser
+- [x] S062-T4 Cover workflow override and label trimming
+- [x] S062-T5 Design floor pass: focus rings, colour tokens, one container per diagram
+
+**Bugs found**
+
+- B37 (Low, Functional): Admin cover field rejected the site's own cover images
+- B38 (Low, Accessibility): New blog controls had no focus rings and used one-off colours
+
+#### S064  ·  Done  ·  Nov 12
+
+As the product owner, I want posts shared through the social network's API to show the article cover on the link card so that the share stands out in the feed.
+
+**Acceptance criteria**
+
+- [x] The cover, or the site's default share image, is uploaded and attached as the card thumbnail
+- [x] If the upload fails, the post still goes out without it
+
+**Sub-tasks**
+
+- [x] S064-T1 Upload the image through the network's image API
+- [x] S064-T2 Attach it as the link card thumbnail with a fallback
+
+#### S065  ·  Done  ·  Nov 12
+
+As the product owner, I want the hourly job's log to show what the blog step did so that a post that did not go out can be traced without opening the database.
+
+**Acceptance criteria**
+
+- [x] Log shows drafts imported, posts published and the next approved post's time
+- [x] Errors show their message, not just a flag
+
+**Sub-tasks**
+
+- [x] S065-T1 Return the blog step's result from the scheduled endpoint
+- [x] S065-T2 Error message in the result
 
 ## E10 Privacy and compliance
 
