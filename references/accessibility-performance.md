@@ -31,6 +31,10 @@ Record these in your performance notes so nobody chases them:
 - [ ] Tap targets at least 24 by 24 CSS px (44 preferred), with spacing between neighbours
 - [ ] No content only conveyed by colour
 - [ ] Motion respects `prefers-reduced-motion`; count-ups and staged reveals are skipped, and the final value is already in the HTML
+- [ ] Anything that moves, scrolls or cycles on its own for more than 5 seconds (rotating taglines, carousels, tickers) stops by itself or has a pause control (WCAG 2.2.2). The simplest fix is one round, then rest on the default state. Also pause it on hover, keyboard focus and hidden tabs
+- [ ] Animated text that replaces an image keeps the accessible name on the link and hides the moving part with `aria-hidden="true"`
+- [ ] A count of new messages is in the button's accessible name, not only in a visual badge, and sound is never the only signal
+- [ ] Shared components (cookie banner, chat) are contrast checked on every surface that loads them, since the app's own button styles can override the public site's
 - [ ] Custom controls (quiz options, tabs, toggle buttons, a dialog's close button, checklist boxes) each get a `:focus-visible` style; toggles set `aria-pressed` or `aria-selected`, and text revealed by a click lands in an `aria-live` region
 - [ ] Dialogs trap focus and return it on close
 - [ ] Skip link and other off-screen helpers hidden until focused (a skip link that shows on every page load looks like a bug)
@@ -50,6 +54,8 @@ Automate with axe-core in the site suite; Lighthouse alone misses issues.
 | Images | WebP/AVIF, `srcset`, width and height set, lazy below the fold |
 | Fonts | `font-display: swap`, preconnect, two weights at most |
 | No layout shift | Reserve space for images, embeds and late content; measure once, not per item |
+| Image to live text | When animated text replaces a logo image, keep the image until `document.fonts.load()` resolves and `document.fonts.check()` passes, and reserve the widest state's width, so no fallback font flashes and nothing shifts |
+| Measured overlays | A canvas or overlay sized from a container that grows after load watches that container with `ResizeObserver`, not only window resize |
 | Skeletons | Show a placeholder for lists that load after the page |
 | Pagination | Every list paginated; admin lists capped |
 | Debounce | Search inputs wait 250 to 300 ms after typing |

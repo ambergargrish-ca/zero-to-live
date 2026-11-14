@@ -51,6 +51,8 @@ A good full tier for a site with accounts and payments:
 - **Intercept form posts** so tests never send real emails or submissions.
 - **One `check(suite, id, name, ok, detail)` helper** that prints `PASS`/`FAIL` lines in a fixed format, so the runner can count them.
 - **Fresh database per suite.** Shared state between suites hides bugs and creates flaky ones.
+- **Link checks know your server routes.** A link to a path served by a server function (`/blog`) has no static file. Accept a link when a static file or a function route serves it, or the checker fails on valid links and people learn to ignore it.
+- **Widgets that float on purpose.** Turn off elements that float over content by design (a chat greeting) in layout and overlap checks, for example by setting their once-per-visit flag in an init script, and test their timing and behaviour in their own suite.
 - **Test the refusal, not just the success.** For every privileged action, assert that the wrong role, a signed-out user and another user's object all get 401, 403 or 404.
 - **Test bindings for local only.** Flags such as `LIMITS_OFF_FOR_TESTS` must be read only when `DEV_MODE` is set. Add a test that they are ignored without it.
 

@@ -77,6 +77,8 @@ Role checks on obvious admin routes are the easy part. Check one level down as w
 - [ ] Analytics and marketing scripts and cookies load only after consent; the consent choice can be changed from every page.
 - [ ] Sign-up consent to Terms and Privacy Policy is explicit; marketing email consent is separate and unticked.
 - [ ] Every consent is logged with the policy version it was given for.
+- [ ] Analytics keeps the referring site by host name only (`linkedin.com`), never the full referring address, which can carry search terms or tokens. The server re-checks it against a strict pattern (letters, digits, dots, hyphens) and drops anything else. Tag links you share yourself with `utm_source` so the source is known even when the referrer is stripped.
+- [ ] A new analytics signal (referring site, scroll depth, read to the end) is recorded only with analytics consent, is described in the privacy policy, and bumps the policy version before it ships.
 - [ ] Users can export their data and delete their account; deletion removes personal data and files, keeping only what law requires (anonymised).
 - [ ] Retention periods are written down and actually enforced by a scheduled job.
 - [ ] Every new table, column, outside service, cookie or storage key is reviewed against the privacy policy before deploy. `compliance_check.py` warns on each one; `--accept` records the review.

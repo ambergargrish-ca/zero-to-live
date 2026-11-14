@@ -1,6 +1,6 @@
 # Backlog
 
-14 epics, 24 features, 65 user stories, 176 sub-tasks and 38 bugs. All items are **Done**.
+14 epics, 24 features, 70 user stories, 196 sub-tasks and 43 bugs. All items are **Done**.
 Bugs are listed under the story where they were found and in full in [BUGS.md](BUGS.md).
 
 ## Epics
@@ -8,16 +8,16 @@ Bugs are listed under the story where they were found and in full in [BUGS.md](B
 | Epic | Goal | Features | Stories | Bugs | Delivered |
 |---|---|---|---|---|---|
 | [E01 Launch site](#e01-launch-site) | Ship a fast, credible public site so visitors can find courses and register interest. | 2 | 5 | 2 | Nov 5 to 6 |
-| [E02 Brand and design system](#e02-brand-and-design-system) | A consistent, accessible visual identity across site, portal and email. | 2 | 5 | 1 | Nov 6 to 10 |
+| [E02 Brand and design system](#e02-brand-and-design-system) | A consistent, accessible visual identity across site, portal and email. | 2 | 7 | 3 | Nov 6 to 14 |
 | [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 6 | 2 | Nov 6 to 12 |
 | [E04 Hosting, CI and deploys](#e04-hosting-ci-and-deploys) | Free, reliable hosting with controlled, countable releases. | 2 | 5 | 4 | Nov 6 to 11 |
 | [E05 Accounts and access](#e05-accounts-and-access) | Safe sign in with the right access for every role. | 2 | 7 | 7 | Nov 6 to 11 |
 | [E06 Learning platform](#e06-learning-platform) | Everything a learner and instructor need to run a live course. | 2 | 5 | 3 | Nov 6 to 10 |
 | [E07 Commerce](#e07-commerce) | Take payment safely and fairly, in the buyer's currency. | 2 | 4 | 3 | Nov 6 to 11 |
 | [E08 Careers marketplace](#e08-careers-marketplace) | Connect learners and employers with real Canadian AI and tech jobs. | 2 | 4 | 2 | Nov 7 to 10 |
-| [E09 Support and engagement](#e09-support-and-engagement) | Help visitors fast and keep them coming back. | 2 | 11 | 5 | Nov 7 to 12 |
-| [E10 Privacy and compliance](#e10-privacy-and-compliance) | Collect only what we need, keep it only as long as stated, and prove it. | 2 | 4 | 0 | Nov 10 to 11 |
-| [E11 Quality engineering](#e11-quality-engineering) | Know the product works before anyone else finds out it doesn't. | 1 | 3 | 3 | Nov 6 to 11 |
+| [E09 Support and engagement](#e09-support-and-engagement) | Help visitors fast and keep them coming back. | 2 | 14 | 6 | Nov 7 to 14 |
+| [E10 Privacy and compliance](#e10-privacy-and-compliance) | Collect only what we need, keep it only as long as stated, and prove it. | 2 | 4 | 1 | Nov 10 to 14 |
+| [E11 Quality engineering](#e11-quality-engineering) | Know the product works before anyone else finds out it doesn't. | 1 | 3 | 4 | Nov 6 to 13 |
 | [E12 Security](#e12-security) | Find and fix weaknesses before attackers do. | 1 | 2 | 3 | Nov 6 to 11 |
 | [E13 Performance](#e13-performance) | Fast on a mid-range phone, cheap to serve. | 1 | 1 | 3 | Nov 10 to 11 |
 | [E14 Productisation: zero-to-live](#e14-productisation-zero-to-live) | Turn the build's methods into a reusable, citable open-source Claude skill. | 1 | 3 | 0 | Nov 11 |
@@ -116,7 +116,7 @@ As a university partner, I want an enquiry page so that I can start a partnershi
 ## E02 Brand and design system
 
 **Goal:** A consistent, accessible visual identity across site, portal and email.  
-**Delivered:** Nov 6 to 10
+**Delivered:** Nov 6 to 14
 
 ### F02.1 Design tokens and identity
 
@@ -163,6 +163,28 @@ As a recipient, I want branded emails with buttons instead of raw links so that 
 - [x] S008-T1 Shared email template
 - [x] S008-T2 Button component with allow-listed link labels
 
+#### S069  ·  Done  ·  Nov 14
+
+As a visitor, I want the new logo, colours and headline font on every page, email, certificate and share image so that the brand looks the same wherever I meet it.
+
+**Acceptance criteria**
+
+- [x] Brand rules and design boards written down before rollout
+- [x] Logo, icons, favicon, share images, email header and certificate (page and PDF) updated in one release
+- [x] Generated covers use bundled font files with their licences
+- [x] Content writers get the brand rules for any new graphic
+
+**Sub-tasks**
+
+- [x] S069-T1 Brand kit document and boards
+- [x] S069-T2 Logo, icons, favicon and share images
+- [x] S069-T3 Headline font, email header, certificate logo and seal
+- [x] S069-T4 Bundled fonts for generated covers
+
+**Bugs found**
+
+- B42 (Medium, Functional): Certificate PDF metadata pointed at the wrong object after images were added
+
 ### F02.2 Motion and media
 
 #### S009  ·  Done  ·  Nov 6 to 11
@@ -183,6 +205,7 @@ As a first-time visitor, I want a short branded loading moment and smooth page c
 **Bugs found**
 
 - B29 (Medium, UI): Blank flash and outlined box on every page change
+- B41 (Low, UI): Home hero animation overlapped its own labels and drifted off the grid
 
 #### S010  ·  Done  ·  Nov 6
 
@@ -198,6 +221,25 @@ As a visitor, I want relevant photography with credits so that pages feel real, 
 - [x] S010-T1 Source photos
 - [x] S010-T2 Credits page
 - [x] S010-T3 Fallback art
+
+#### S070  ·  Done  ·  Nov 14
+
+As a visitor, I want the header logo to show its tagline variations without distracting me so that the brand feels alive and the page stays calm.
+
+**Acceptance criteria**
+
+- [x] Cycles through the approved phrases once per page, then rests on the main logo (WCAG 2.2.2)
+- [x] Still under reduced motion and on very narrow screens; pauses on hover, keyboard focus and hidden tabs
+- [x] The image stays until the brand font has loaded, so no fallback font flashes
+- [x] Room for the widest phrase is reserved, so the menu never moves
+- [x] The link keeps its accessible name and the moving text is hidden from screen readers
+
+**Sub-tasks**
+
+- [x] S070-T1 Slot animation with type fitted to the room
+- [x] S070-T2 Reserved width per screen size
+- [x] S070-T3 Font loading guard
+- [x] S070-T4 One round, then stop
 
 ## E03 SEO and AI-engine readiness
 
@@ -795,7 +837,7 @@ As an employer, I want Easy Apply and an applicant tracker so that I can manage 
 ## E09 Support and engagement
 
 **Goal:** Help visitors fast and keep them coming back.  
-**Delivered:** Nov 7 to 12
+**Delivered:** Nov 7 to 14
 
 ### F09.1 Help and support
 
@@ -831,6 +873,42 @@ As a visitor, I want site search so that I can find a course, job or page direct
 
 - [x] S040-T1 Search index
 - [x] S040-T2 Search UI with debounce
+
+#### S066  ·  Done  ·  Nov 13
+
+As a visitor, I want a short greeting from the help chat and a count of new messages on the Help button so that I notice help is there without it getting in my way.
+
+**Acceptance criteria**
+
+- [x] Greeting shows once per visit, 5 seconds after the page is on screen and the cookie choices are closed
+- [x] Never over an open chat, a chat already going, or the signed-in app
+- [x] The Help button shows the number of new messages, and its accessible name says it too
+- [x] A soft sound plays only after the visitor has tapped, clicked or typed on the page
+
+**Sub-tasks**
+
+- [x] S066-T1 Greeting bubble with a once-per-visit flag
+- [x] S066-T2 Numbered badge and accessible name
+- [x] S066-T3 Sound unlocked by the first tap or key press
+- [x] S066-T4 Browser tests for timing, badge and once per visit
+
+#### S067  ·  Done  ·  Nov 13
+
+As a visitor, I want to know when a person can join the chat so that I am never left waiting after hours.
+
+**Acceptance criteria**
+
+- [x] Staffed hours are checked on the server in the business's time zone
+- [x] After hours the chat offers a question for the team instead of a person, and joining the queue is refused
+- [x] The chatbot is told live chat is closed, and any offer of a person it still makes is rewritten
+- [x] Tests can try any hour, but only in dev mode
+
+**Sub-tasks**
+
+- [x] S067-T1 Server check of staffed hours
+- [x] S067-T2 Chat status and greeting follow the hours
+- [x] S067-T3 After-hours prompt and reply rewrite
+- [x] S067-T4 Dev-only test hour and tests
 
 ### F09.2 Content
 
@@ -994,10 +1072,34 @@ As the product owner, I want the hourly job's log to show what the blog step did
 - [x] S065-T1 Return the blog step's result from the scheduled endpoint
 - [x] S065-T2 Error message in the result
 
+#### S068  ·  Done  ·  Nov 13 to 14
+
+As the product owner, I want to see readers, finishes and traffic sources for each article so that I know which posts help people and where readers find them.
+
+**Acceptance criteria**
+
+- [x] Readers, pages opened, read to the end and top source, overall and per article, for 7, 30 or 90 days
+- [x] Counts only visitors who allowed analytics
+- [x] The referring site is stored by host name only; anything else is dropped on the server
+- [x] Links the site shares itself carry a source tag
+- [x] Privacy policy updated and its version bumped before release
+- [x] The panel shows first and fits a phone
+
+**Sub-tasks**
+
+- [x] S068-T1 Referring site and read-to-the-end events in the tracker
+- [x] S068-T2 Server pattern check for the source and a staff-only stats route
+- [x] S068-T3 Admin panel with period buttons
+- [x] S068-T4 Privacy policy change and tests
+
+**Bugs found**
+
+- B40 (Low, UI): Blog analytics did not fit a phone
+
 ## E10 Privacy and compliance
 
 **Goal:** Collect only what we need, keep it only as long as stated, and prove it.  
-**Delivered:** Nov 10 to 11
+**Delivered:** Nov 10 to 14
 
 ### F10.1 Consent and policies
 
@@ -1016,6 +1118,10 @@ As a visitor, I want to choose cookies and change my mind from any page so that 
 - [x] S042-T1 Consent banner and settings
 - [x] S042-T2 Consent log
 - [x] S042-T3 Footer control
+
+**Bugs found**
+
+- B39 (Medium, Accessibility): Portal cookie banner's Accept all button had no readable label
 
 #### S043  ·  Done  ·  Nov 10
 
@@ -1066,7 +1172,7 @@ As the privacy owner, I want retention enforced automatically so that the policy
 ## E11 Quality engineering
 
 **Goal:** Know the product works before anyone else finds out it doesn't.  
-**Delivered:** Nov 6 to 11
+**Delivered:** Nov 6 to 13
 
 ### F11.1 Test suites
 
@@ -1088,6 +1194,7 @@ As the product owner, I want an evaluation kit with one report so that release r
 **Bugs found**
 
 - B11 (Low, Test): Carousel arrow tests failed because the Help button covered it
+- B43 (Low, Test): Site check flagged links to server-rendered routes as broken
 
 #### S047  ·  Done  ·  Nov 9 to 10
 

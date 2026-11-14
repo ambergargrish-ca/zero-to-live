@@ -2,15 +2,15 @@
 
 How the case-study platform behind this skill was planned and delivered, as a product backlog: epics, features, user stories, sub-tasks and bugs.
 
-The platform went from a static launch site to a full learning and careers platform (accounts, dashboards, learning portal, payments, job board, support, blog) in **8 days and 118 commits** (Nov 5 to 12, 2026), with Claude doing most of the engineering and a product owner setting scope, priorities and release gates.
+The platform went from a static launch site to a full learning and careers platform (accounts, dashboards, learning portal, payments, job board, support, blog) in **10 days and 128 commits** (Nov 5 to 14, 2026), with Claude doing most of the engineering and a product owner setting scope, priorities and release gates.
 
 | | Count |
 |---|---|
 | Epics | 14 |
 | Features | 24 |
-| User stories | 65 |
-| Sub-tasks | 176 |
-| Bugs found and fixed | 38 |
+| User stories | 70 |
+| Sub-tasks | 196 |
+| Bugs found and fixed | 43 |
 | Automated checks passing before release | 1,298 |
 
 ## Files
@@ -44,6 +44,8 @@ Each story has acceptance criteria written as checks, so "done" means the criter
 | Nov 10 | Career profiles, applicant tracking, consent and policies, evaluation kit, two-step sign in, recordings on free storage | E05, E06, E08, E10, E11 |
 | Nov 11 | Performance round, two security audits, retention and data export, blog with approval badges, wider sharing and exact-time publishing, account menu on public pages, zero-to-live skill | E05, E09, E10, E12, E13, E14 |
 | Nov 12 | Sitemap leaves out noindex pages, a share image per article, richer blog articles (photos, walkthroughs, quick checks, checklists, site-drawn diagrams, branded covers), covers on shared link cards, blog result in the scheduled job log | E03, E09 |
+| Nov 13 | Help chat greeting and new-message count, live chat only in staffed hours, home animation fits its grid, link check knows server routes, blog analytics with referring site by name only | E02, E09, E11 |
+| Nov 14 | Blog analytics fits phones, readable cookie banner in the app, brand kit and a rebrand of site, emails, certificates and covers, moving header logo that stops after one round | E02, E09, E10 |
 
 ## How the work was run
 

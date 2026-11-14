@@ -30,11 +30,14 @@ A page that bypasses the layout is a compliance bug: it loses the privacy link a
 
 - **No inline scripts or handlers** (`<script>...</script>`, `onclick=`). Put code in files so the CSP can use `script-src 'self'`. JSON-LD (`type="application/ld+json"`) is the one allowed inline block, and its content must be escaped (replace `<` with `<`) so data cannot close the tag.
 - **Design tokens** for colour, spacing, radius and type in CSS custom properties. No one-off values.
+- **Brand rules in one file.** Write the logo, approved wording, colours, type and misuse rules in one document before a rebrand, roll it out to pages, emails, certificates and share images in one release, and point content writers and image generators at that file.
 - **Mobile first.** Build at 360px wide, then widen. No horizontal scroll at 320px.
 - **Images:** width and height attributes, `loading="lazy"` below the fold, WebP or AVIF, `srcset` for sizes. Every image has alt text (empty `alt=""` for decorative ones).
 - **Forms:** labels on every field, `maxlength` on every text input, a one-line privacy notice next to the submit button, a bot check (Turnstile, hCaptcha) on public forms. A field that accepts a path on your own site (`/assets/cover.jpg`) cannot be `type="url"`, because browsers reject anything that is not a full web address: use `type="text" inputmode="url"` with a `pattern` listing the allowed hosts and paths, and check the same rule on the server.
 - **Fallbacks:** if a font, image CDN or API fails, the page still reads and works. Test it by blocking them.
 - **Interactive content enhances plain HTML.** Walkthroughs, quizzes, checklists and tabbed comparisons are rendered by the server as readable HTML (every step, the answer, every column), and JavaScript only adds the interaction. Wrap every browser storage call in try/catch so private browsing cannot break the page.
+- **Prompts wait their turn.** A greeting bubble or prompt waits until the cookie choices and any open dialog are closed and the tab is visible, shows once per visit (a session flag), and never appears over a conversation already going or inside the signed-in app.
+- **Sound needs a user gesture.** Browsers block audio until the visitor clicks, taps or types. Create or resume the `AudioContext` on the first such event and treat sound as optional: the badge and text still carry the message.
 - **Diagrams as HTML, not images.** Draw workflow, comparison and statistics diagrams from short text blocks in the content as HTML and CSS. They stay sharp on any screen, follow your design tokens and themes, and screen readers and search engines can read them.
 - **Fingerprint** CSS and JS (`app.js?v=3f2a9c1b`) at build time, and cache `/assets/*` for a week or more. After changing a shared asset, rebuild every page that loads it: a page still carrying the old hash keeps serving the old file, so the change never reaches browsers. `scripts/compliance_check.py` fails when a page's hash does not match the file.
 - **Signed-in state on static pages.** To show an account menu instead of "Sign in" without slowing every visit, have the app set a harmless hint in browser storage at sign in (and clear it at sign out). Public pages only call the session endpoint when the hint is there, and show nothing until the server confirms the session. The hint is never trusted for access.
@@ -54,7 +57,7 @@ Ship these with the first deploy:
 | JSON-LD | `Organization`, `Person`, `Product`/`Course`, `FAQPage`, `BreadcrumbList` as they apply |
 | `noindex` | On sign-in, dashboards, preview deploy URLs and any `/md/` agent copies |
 
-**Generated share images.** When an article has no photo, render a branded cover from its title with a headless browser (an HTML template saved as a 2:1 screenshot). Cut labels at a word boundary instead of letting them overflow, let authors override the auto-picked text in front matter, and rerun it when the title changes. Use the cover for link previews and article lists rather than repeating it above the same title on the article page.
+**Generated share images.** When an article has no photo, render a branded cover from its title with a headless browser (an HTML template saved as a 2:1 screenshot). Cut labels at a word boundary instead of letting them overflow, let authors override the auto-picked text in front matter, and rerun it when the title changes. Bundle the font files the generator uses (with their licence files) instead of loading web fonts, so covers render the same on any machine. Use the cover for link previews and article lists rather than repeating it above the same title on the article page.
 
 Write content that can be cited: a clear first sentence per section that answers the heading, real numbers, named authors.
 
@@ -65,6 +68,8 @@ Write content that can be cited: a clear first sentence per section that answers
 - Paginate every list; cap admin lists.
 - An audit log row for every privileged action (role change, refund, deletion, export).
 - Edge-cache public reads for a short TTL; never cache anything per user.
+- **Business hours on the server.** When a feature depends on staffed hours (live chat, call backs), work out the hour on the server in the business's time zone (`Intl.DateTimeFormat` with `timeZone`), refuse the action after hours instead of only hiding the button, and tell any AI assistant in its prompt as well as rewriting any offer it still makes. Let tests set the hour only when the dev-mode flag is on.
+- **Hand-written file formats use fixed references.** When writing a PDF or another format with internal object numbers by hand, point at objects by a fixed number, never "the last one", and test that the output opens with its metadata after every change to its contents.
 - Hide a screen in the menu **and** tighten its API route to the same role. A hidden link with an open route is not access control.
 
 ## Outside integrations

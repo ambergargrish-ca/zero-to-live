@@ -39,8 +39,8 @@ zero-to-live/
 │   └── gitignore
 └── project/                         project management view of the case study
     ├── README.md                    timeline, hierarchy, how to import
-    ├── BACKLOG.md                   14 epics, 65 stories, 176 sub-tasks
-    ├── BUGS.md                      38 bugs with root cause and prevention
+    ├── BACKLOG.md                   14 epics, 70 stories, 196 sub-tasks
+    ├── BUGS.md                      43 bugs with root cause and prevention
     └── backlog.csv                  Jira-importable backlog
 ```
 

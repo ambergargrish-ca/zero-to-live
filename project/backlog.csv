@@ -868,3 +868,96 @@ Story: S062
 Root cause: Quiz options, tabs, the image dialog close button, checklist boxes and the contents menu were added without focus-visible styles or tokens
 Fix: Focus rings on every custom control, colours moved to tokens, one container per diagram
 Prevention: Accessibility checklist: every custom control gets a focus-visible style",Done,Low,zero-to-live E09 accessibility
+294,169,Story,S066 A greeting bubble and a count of new messages on the Help button,"As a visitor, I want a short greeting from the help chat and a count of new messages on the Help button so that I notice help is there without it getting in my way.
+
+Acceptance criteria:
+- Greeting shows once per visit, 5 seconds after the page is on screen and the cookie choices are closed
+- Never over an open chat, a chat already going, or the signed-in app
+- The Help button shows the number of new messages, and its accessible name says it too
+- A soft sound plays only after the visitor has tapped, clicked or typed on the page
+
+Feature: F09.1 Help and support. Delivered Nov 13.",Done,Medium,zero-to-live E09 F09.1
+295,294,Sub-task,S066-T1 Greeting bubble with a once-per-visit flag,,Done,Medium,zero-to-live E09
+296,294,Sub-task,S066-T2 Numbered badge and accessible name,,Done,Medium,zero-to-live E09
+297,294,Sub-task,S066-T3 Sound unlocked by the first tap or key press,,Done,Medium,zero-to-live E09
+298,294,Sub-task,"S066-T4 Browser tests for timing, badge and once per visit",,Done,Medium,zero-to-live E09
+299,169,Story,S067 Live chat with a person only during staffed hours,"As a visitor, I want to know when a person can join the chat so that I am never left waiting after hours.
+
+Acceptance criteria:
+- Staffed hours are checked on the server in the business's time zone
+- After hours the chat offers a question for the team instead of a person, and joining the queue is refused
+- The chatbot is told live chat is closed, and any offer of a person it still makes is rewritten
+- Tests can try any hour, but only in dev mode
+
+Feature: F09.1 Help and support. Delivered Nov 13.",Done,Medium,zero-to-live E09 F09.1
+300,299,Sub-task,S067-T1 Server check of staffed hours,,Done,Medium,zero-to-live E09
+301,299,Sub-task,S067-T2 Chat status and greeting follow the hours,,Done,Medium,zero-to-live E09
+302,299,Sub-task,S067-T3 After-hours prompt and reply rewrite,,Done,Medium,zero-to-live E09
+303,299,Sub-task,S067-T4 Dev-only test hour and tests,,Done,Medium,zero-to-live E09
+304,169,Story,"S068 Blog analytics: readers, read to the end and where readers came from","As the product owner, I want to see readers, finishes and traffic sources for each article so that I know which posts help people and where readers find them.
+
+Acceptance criteria:
+- Readers, pages opened, read to the end and top source, overall and per article, for 7, 30 or 90 days
+- Counts only visitors who allowed analytics
+- The referring site is stored by host name only; anything else is dropped on the server
+- Links the site shares itself carry a source tag
+- Privacy policy updated and its version bumped before release
+- The panel shows first and fits a phone
+
+Feature: F09.2 Content. Delivered Nov 13 to 14.",Done,Medium,zero-to-live E09 F09.2
+305,304,Sub-task,S068-T1 Referring site and read-to-the-end events in the tracker,,Done,Medium,zero-to-live E09
+306,304,Sub-task,S068-T2 Server pattern check for the source and a staff-only stats route,,Done,Medium,zero-to-live E09
+307,304,Sub-task,S068-T3 Admin panel with period buttons,,Done,Medium,zero-to-live E09
+308,304,Sub-task,S068-T4 Privacy policy change and tests,,Done,Medium,zero-to-live E09
+309,22,Story,S069 A new brand rolled out everywhere in one release,"As a visitor, I want the new logo, colours and headline font on every page, email, certificate and share image so that the brand looks the same wherever I meet it.
+
+Acceptance criteria:
+- Brand rules and design boards written down before rollout
+- Logo, icons, favicon, share images, email header and certificate (page and PDF) updated in one release
+- Generated covers use bundled font files with their licences
+- Content writers get the brand rules for any new graphic
+
+Feature: F02.1 Design tokens and identity. Delivered Nov 14.",Done,Medium,zero-to-live E02 F02.1
+310,309,Sub-task,S069-T1 Brand kit document and boards,,Done,Medium,zero-to-live E02
+311,309,Sub-task,"S069-T2 Logo, icons, favicon and share images",,Done,Medium,zero-to-live E02
+312,309,Sub-task,"S069-T3 Headline font, email header, certificate logo and seal",,Done,Medium,zero-to-live E02
+313,309,Sub-task,S069-T4 Bundled fonts for generated covers,,Done,Medium,zero-to-live E02
+314,22,Story,S070 A moving header logo that stops on its own,"As a visitor, I want the header logo to show its tagline variations without distracting me so that the brand feels alive and the page stays calm.
+
+Acceptance criteria:
+- Cycles through the approved phrases once per page, then rests on the main logo (WCAG 2.2.2)
+- Still under reduced motion and on very narrow screens; pauses on hover, keyboard focus and hidden tabs
+- The image stays until the brand font has loaded, so no fallback font flashes
+- Room for the widest phrase is reserved, so the menu never moves
+- The link keeps its accessible name and the moving text is hidden from screen readers
+
+Feature: F02.2 Motion and media. Delivered Nov 14.",Done,Medium,zero-to-live E02 F02.2
+315,314,Sub-task,S070-T1 Slot animation with type fitted to the room,,Done,Medium,zero-to-live E02
+316,314,Sub-task,S070-T2 Reserved width per screen size,,Done,Medium,zero-to-live E02
+317,314,Sub-task,S070-T3 Font loading guard,,Done,Medium,zero-to-live E02
+318,314,Sub-task,"S070-T4 One round, then stop",,Done,Medium,zero-to-live E02
+319,182,Bug,B39 Portal cookie banner's Accept all button had no readable label,"Found by: Product owner review (Nov 14)
+Story: S042
+Root cause: The banner's dark button style and the app's own button colours both applied, so the label came out dark on a dark button
+Fix: Accept all uses the same amber button as the public site, with a dark label that always wins
+Prevention: Accessibility checklist: contrast check shared components (cookie banner, chat) on every surface that loads them",Done,Medium,zero-to-live E10 accessibility
+320,169,Bug,B40 Blog analytics did not fit a phone,"Found by: UAT on phone (Nov 14)
+Story: S068
+Root cause: The panel sat below every article in the list, the period buttons wrapped beside the heading, and word values (top source, no data) used the large number font and overflowed their cards
+Fix: Panel moved to the top, buttons stay on one row and drop below the heading, word values use the text font
+Prevention: Dashboards put the summary first; admin panels are checked at phone width",Done,Low,zero-to-live E09 ui
+321,22,Bug,B41 Home hero animation overlapped its own labels and drifted off the grid,"Found by: Product owner review (Nov 13)
+Story: S009
+Root cause: Grid lines were counted from the bottom of a canvas measured once at load, the hero grew after load, and tasks were placed without checking the labels of nearby tasks
+Fix: Grid counted from the top, the canvas re-measured with a ResizeObserver on the hero, and a task with no clear space runs without a label
+Prevention: Performance checklist: anything measured from a container watches that container, not only the window",Done,Low,zero-to-live E02 ui
+322,22,Bug,B42 Certificate PDF metadata pointed at the wrong object after images were added,"Found by: Rebrand review (Nov 14)
+Story: S069
+Root cause: The PDF trailer found the document info object by assuming it was the last object; adding the logo and seal images made it point at an image
+Fix: The trailer refers to the info object by its fixed number
+Prevention: Building rule: hand-written file formats use fixed object references, and the generated PDF is checked after every change",Done,Medium,zero-to-live E02 functional
+323,197,Bug,B43 Site check flagged links to server-rendered routes as broken,"Found by: Test run (Nov 13)
+Story: S046
+Root cause: The link checker only looked for a static file for each link, so /blog, served by a server function, failed
+Fix: A link counts as valid when a static file or a server function serves it
+Prevention: Testing rule: link checks know your server routes",Done,Low,zero-to-live E11 test

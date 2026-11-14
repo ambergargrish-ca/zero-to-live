@@ -1,24 +1,24 @@
 # Bug log
 
-38 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
+43 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
 
 ## Summary
 
 | Severity | Count |
 |---|---|
 | High | 5 |
-| Medium | 19 |
-| Low | 14 |
+| Medium | 21 |
+| Low | 17 |
 
 | Type | Count |
 |---|---|
 | Security | 14 |
-| Functional | 10 |
-| UI | 5 |
+| Functional | 11 |
+| UI | 7 |
+| Accessibility | 3 |
 | Operational | 2 |
 | Performance | 2 |
-| Accessibility | 2 |
-| Test | 1 |
+| Test | 2 |
 | Process | 1 |
 | SEO | 1 |
 
@@ -26,12 +26,12 @@
 |---|---|
 | Security audit | 7 |
 | Pen test | 5 |
+| Product owner review | 4 |
 | Lighthouse | 3 |
-| UAT on phone | 2 |
+| UAT on phone | 3 |
 | Live smoke test | 2 |
-| Product owner review | 2 |
+| Test run | 2 |
 | Product owner on phone | 1 |
-| Test run | 1 |
 | Header check | 1 |
 | Responsive audit | 1 |
 | Feature test | 1 |
@@ -47,6 +47,7 @@
 | Integration setup | 1 |
 | Admin use | 1 |
 | Design review | 1 |
+| Rebrand review | 1 |
 
 **Pattern worth noting:** most security findings came from scheduled tests (pen test, audits), most UI bugs from real-phone UAT. Automated suites catch regressions; humans on real devices catch what nobody thought to test.
 
@@ -78,6 +79,8 @@
 | B33 | Sitemap listed a page marked noindex | Medium | SEO | S011 | Search Console | Nov 12 |
 | B34 | Account menu did not reach browsers after release | Medium | Functional | S055 | Release check | Nov 11 |
 | B36 | A rewritten draft file kept the old publish time | Medium | Functional | S060 | Product owner review | Nov 12 |
+| B39 | Portal cookie banner's Accept all button had no readable label | Medium | Accessibility | S042 | Product owner review | Nov 14 |
+| B42 | Certificate PDF metadata pointed at the wrong object after images were added | Medium | Functional | S069 | Rebrand review | Nov 14 |
 | B05 | Form inputs had no length limits | Low | Security | S004 | Pen test | Nov 6 |
 | B06 | Checkout links were not forced to HTTPS | Low | Security | S031 | Pen test | Nov 6 |
 | B11 | Carousel arrow tests failed because the Help button covered it | Low | Test | S046 | Test run | Nov 7 |
@@ -92,6 +95,9 @@
 | B35 | Company page connection said 'cancelled' when page posting was not approved yet | Low | Functional | S058 | Integration setup | Nov 11 |
 | B37 | Admin cover field rejected the site's own cover images | Low | Functional | S062 | Admin use | Nov 12 |
 | B38 | New blog controls had no focus rings and used one-off colours | Low | Accessibility | S062 | Design review | Nov 12 |
+| B40 | Blog analytics did not fit a phone | Low | UI | S068 | UAT on phone | Nov 14 |
+| B41 | Home hero animation overlapped its own labels and drifted off the grid | Low | UI | S009 | Product owner review | Nov 13 |
+| B43 | Site check flagged links to server-rendered routes as broken | Low | Test | S046 | Test run | Nov 13 |
 
 ## Root cause and prevention
 
@@ -398,3 +404,43 @@
 - **Root cause:** Quiz options, tabs, the image dialog close button, checklist boxes and the contents menu were added without focus-visible styles or tokens
 - **Fix:** Focus rings on every custom control, colours moved to tokens, one container per diagram
 - **Prevention:** Accessibility checklist: every custom control gets a focus-visible style
+
+### B39 Portal cookie banner's Accept all button had no readable label
+
+- **Severity / type:** Medium / Accessibility  (epic E10, story S042)
+- **Found by:** Product owner review, Nov 14
+- **Root cause:** The banner's dark button style and the app's own button colours both applied, so the label came out dark on a dark button
+- **Fix:** Accept all uses the same amber button as the public site, with a dark label that always wins
+- **Prevention:** Accessibility checklist: contrast check shared components (cookie banner, chat) on every surface that loads them
+
+### B40 Blog analytics did not fit a phone
+
+- **Severity / type:** Low / UI  (epic E09, story S068)
+- **Found by:** UAT on phone, Nov 14
+- **Root cause:** The panel sat below every article in the list, the period buttons wrapped beside the heading, and word values (top source, no data) used the large number font and overflowed their cards
+- **Fix:** Panel moved to the top, buttons stay on one row and drop below the heading, word values use the text font
+- **Prevention:** Dashboards put the summary first; admin panels are checked at phone width
+
+### B41 Home hero animation overlapped its own labels and drifted off the grid
+
+- **Severity / type:** Low / UI  (epic E02, story S009)
+- **Found by:** Product owner review, Nov 13
+- **Root cause:** Grid lines were counted from the bottom of a canvas measured once at load, the hero grew after load, and tasks were placed without checking the labels of nearby tasks
+- **Fix:** Grid counted from the top, the canvas re-measured with a ResizeObserver on the hero, and a task with no clear space runs without a label
+- **Prevention:** Performance checklist: anything measured from a container watches that container, not only the window
+
+### B42 Certificate PDF metadata pointed at the wrong object after images were added
+
+- **Severity / type:** Medium / Functional  (epic E02, story S069)
+- **Found by:** Rebrand review, Nov 14
+- **Root cause:** The PDF trailer found the document info object by assuming it was the last object; adding the logo and seal images made it point at an image
+- **Fix:** The trailer refers to the info object by its fixed number
+- **Prevention:** Building rule: hand-written file formats use fixed object references, and the generated PDF is checked after every change
+
+### B43 Site check flagged links to server-rendered routes as broken
+
+- **Severity / type:** Low / Test  (epic E11, story S046)
+- **Found by:** Test run, Nov 13
+- **Root cause:** The link checker only looked for a static file for each link, so /blog, served by a server function, failed
+- **Fix:** A link counts as valid when a static file or a server function serves it
+- **Prevention:** Testing rule: link checks know your server routes
