@@ -961,3 +961,80 @@ Story: S046
 Root cause: The link checker only looked for a static file for each link, so /blog, served by a server function, failed
 Fix: A link counts as valid when a static file or a server function serves it
 Prevention: Testing rule: link checks know your server routes",Done,Low,zero-to-live E11 test
+324,62,Story,S071 Every change reaches production only through a release gate,"As the product owner, I want every change to reach production only through a release gate so that no untested or unreviewed code goes live.
+
+Acceptance criteria:
+- A dev site with its own database, file bucket and test payment keys
+- Quick checks run on every pull request into dev and main
+- The production branch moves only when each change came from dev, was approved by a second person and passed the checks
+- Emergency changes are released and logged for review within 2 business days
+- A direct push to the production branch opens an issue at once
+- A time-boxed single approver exception ends by itself on its date and logs every release it allows
+
+Feature: F04.3 Change management. Delivered Nov 12 to 15.",Done,Medium,zero-to-live E04 F04.3
+325,324,Sub-task,S071-T1 Dev branch and dev environment,,Done,Medium,zero-to-live E04
+326,324,Sub-task,S071-T2 Quick checks workflow,,Done,Medium,zero-to-live E04
+327,324,Sub-task,S071-T3 Release gate workflow,,Done,Medium,zero-to-live E04
+328,324,Sub-task,S071-T4 Direct push alert,,Done,Medium,zero-to-live E04
+329,324,Sub-task,S071-T5 Single approver exception with an end date,,Done,Medium,zero-to-live E04
+330,324,Sub-task,S071-T6 Pull request template and runbook update,,Done,Medium,zero-to-live E04
+331,62,Story,S072 Dev and preview sites hidden from search and clearly labelled,"As a visitor, I want dev and preview sites hidden from search engines and clearly labelled so that I never land on test data or mistake it for the real site.
+
+Acceptance criteria:
+- Non-production builds send noindex headers and a robots.txt that blocks everything
+- No sitemap or llms.txt on non-production builds
+- Every screen of the dev site shows a development banner
+
+Feature: F04.3 Change management. Delivered Nov 12.",Done,Medium,zero-to-live E04 F04.3
+332,331,Sub-task,S072-T1 Branch check in the build step,,Done,Medium,zero-to-live E04
+333,331,Sub-task,S072-T2 Environment flag and banner,,Done,Medium,zero-to-live E04
+334,85,Story,S073 A security page with dated access and log reviews,"As an admin, I want one page listing everyone with staff access and recording each review so that access and log reviews leave dated evidence.
+
+Acceptance criteria:
+- Everyone above the basic role listed with MFA status, last activity and flags (MFA off, unused for 90 days)
+- Security events of the last 90 days shown
+- Quarterly access reviews and monthly log reviews recorded in the audit log with a note
+- Review reminder issues open on a schedule with a checklist
+
+Feature: F05.2 Roles and permissions. Delivered Nov 12.",Done,Medium,zero-to-live E05 F05.2
+335,334,Sub-task,S073-T1 Security API and admin page,,Done,Medium,zero-to-live E05
+336,334,Sub-task,S073-T2 Review records in the audit log,,Done,Medium,zero-to-live E05
+337,334,Sub-task,S073-T3 Scheduled review reminder workflow,,Done,Medium,zero-to-live E05
+338,85,Story,"S074 Alerts on staff access changes, and lower access takes effect at once","As an admin, I want an email alert on every change to staff access and every MFA reset so that an unexpected change is seen the same day.
+
+Acceptance criteria:
+- Granting, removing or lowering a privileged role emails every admin with who changed whom, from what to what
+- MFA resets alert every admin
+- Turning an account off or lowering its role ends its sessions
+- A failed alert never blocks the change
+
+Feature: F05.2 Roles and permissions. Delivered Nov 12.",Done,Medium,zero-to-live E05 F05.2
+339,338,Sub-task,S074-T1 Alert on privileged role changes,,Done,Medium,zero-to-live E05
+340,338,Sub-task,S074-T2 Alert on MFA resets,,Done,Medium,zero-to-live E05
+341,338,Sub-task,S074-T3 End sessions when access goes down,,Done,Medium,zero-to-live E05
+342,182,Story,S075 Written security policies that match what we do,"As the product owner, I want short written security policies that describe what we actually do so that an auditor or customer can test each control against evidence.
+
+Acceptance criteria:
+- Ten policies: information security, access control, change management, logging and monitoring, incident response, business continuity, vendor management, risk assessment, data classification, acceptable use
+- Each has an owner, a version, an effective date and a yearly review
+- Templates for the records the policies require
+
+Feature: F10.1 Consent and policies. Delivered Nov 12.",Done,Medium,zero-to-live E10 F10.1
+343,342,Sub-task,S075-T1 Write the ten policies,,Done,Medium,zero-to-live E10
+344,342,Sub-task,S075-T2 Records templates,,Done,Medium,zero-to-live E10
+345,342,Sub-task,S075-T3 Link policies from the security guide and runbook,,Done,Medium,zero-to-live E10
+346,43,Story,S076 Each article's cover image in the RSS feed,"As a site that reads the blog feed, I want each article's cover image in the feed so that I can show it next to the headline.
+
+Acceptance criteria:
+- Cover image as Media RSS content with width, height and alt text
+- Site-relative image URLs made absolute
+- Every value XML-escaped
+
+Feature: F03.1 Crawlability and structured data. Delivered Nov 12.",Done,Medium,zero-to-live E03 F03.1
+347,346,Sub-task,S076-T1 Media RSS namespace and item image,,Done,Medium,zero-to-live E03
+348,346,Sub-task,"S076-T2 Absolute, sized image URLs",,Done,Medium,zero-to-live E03
+349,62,Bug,B44 A replaced team photo kept showing the old picture,"Found by: Product owner review (Nov 15)
+Story: S019
+Root cause: The new photo was saved under the same file names; images are not fingerprinted and are cached for a long time, so browsers and the CDN kept serving the old copy
+Fix: New file names for the new photo, with every page and the JSON-LD reference updated
+Prevention: Building rule: when an image changes, give it a new file name or fingerprint it",Done,Low,zero-to-live E04 functional

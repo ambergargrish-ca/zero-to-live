@@ -28,9 +28,43 @@ State lives in `.deploy/state.json` (git-ignored): last deployed commit, builds 
 
 Always say how many builds are left before deploying, and stop when you are within a reserve (default 20) of the limit, keeping those for hotfixes.
 
-## Previews
+## Environments and previews
 
-Push feature branches to get preview URLs without touching production. Preview builds count toward the same monthly build limit on Cloudflare, so batch those too. Keep preview URLs `noindex`.
+Push feature branches to get preview URLs without touching production. Preview builds count toward the same monthly build limit on Cloudflare, so batch those too.
+
+Once real users and real money are involved, add a standing dev environment:
+
+- A `dev` branch that builds a dev site (for example `dev.example.com`) with its own database, its own file bucket and test payment keys only. It never shares a binding or a secret with production.
+- An `ENVIRONMENT=development` variable that the app exposes in its config, so every screen of the dev site shows a banner saying it is a development site with test data. Nobody mistakes it for the real site or enters real details there.
+- Every non-production build is hidden from search engines in the build step itself, not by memory. On Cloudflare Pages, `CF_PAGES_BRANCH` names the branch being built:
+
+```bash
+if [ -n "${CF_PAGES_BRANCH:-}" ] && [ "$CF_PAGES_BRANCH" != "$PRODUCTION_BRANCH" ]; then
+  printf '\n/*\n  X-Robots-Tag: noindex, nofollow\n' >> dist/_headers
+  printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+  rm -f dist/sitemap.xml dist/llms.txt
+fi
+```
+
+## Change management: a release gate
+
+A small team can meet the change management part of SOC 2 (and stop "quick fixes" going straight to production) with three GitHub Actions workflows and one rule: nobody pushes to the production branch by hand.
+
+1. **Quick checks on every pull request** into `dev` and `main`: build, compliance check, unit checks, server code parses. A red X means do not merge. Use a fixed job name (`Quick checks`) so the gate can look it up.
+2. **A release gate** (`templates/github/release-gate.yml`). The host builds production from a separate branch (for example `live`). On every push to `main` the gate checks each change since the last release and moves `live` forward only when every change:
+   - arrived through a pull request into `main` from `dev`, so it ran on the dev site first,
+   - was approved by someone other than the person who opened it, and
+   - passed the Quick checks on its head commit.
+   If anything fails, nothing is published and the gate opens an issue saying which change failed and why.
+3. **A detective control** (`templates/github/guard-production.yml`). The gate moves `live` with the workflow's own token, and pushes made with that token never start other workflows. So any push event on `live` means a person pushed directly, and the workflow opens an issue for review straight away.
+
+Plan for the exceptions in writing, so the gate is never switched off in a hurry:
+
+- **Emergency changes.** A pull request labelled `emergency` may skip the dev and approval steps. It is released, and an issue is opened so a second person reviews it within a set time (for example 2 business days).
+- **Commits that reached main without a pull request.** A manual run of the gate with the commit SHAs and a written reason (at least a sentence) accepts them, and the reason is recorded in an issue.
+- **Only one approver available.** When the second reviewer is not set up yet, use a time-boxed exception: an end date in the workflow, after which a second approval is required again without anyone remembering to switch it back. The other checks still apply, and every release made without a second approval is listed in an issue for later review. Record who decided it and why in the change management policy.
+
+Add a pull request template that asks what changed, how it was tested on the dev site, whether privacy or security is affected, and the rollback step.
 
 ## Before every production deploy
 
@@ -39,6 +73,7 @@ Push feature branches to get preview URLs without touching production. Preview b
 - [ ] Builds left this month stated
 - [ ] Rollback path known (below)
 - [ ] No dev flags in production environment variables
+- [ ] The change reached production through the release gate, not a direct push
 
 ## After every production deploy
 

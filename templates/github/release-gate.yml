@@ -1,0 +1,134 @@
+# Release gate for GitHub Actions (references/deploys.md, Change management).
+# Copy to .github/workflows/release-gate.yml.
+#
+# The host builds production from PRODUCTION_BRANCH (default "live"). Nobody pushes to it: this workflow moves it
+# forward to main, and only when every change on main since the last release:
+#   1. arrived through a pull request into main from DEV_BRANCH (so it ran on the dev site first),
+#   2. was approved by someone other than the person who opened the pull request, and
+#   3. passed the check run named CHECK_NAME on the pull request's head commit.
+# A pull request labelled "emergency" may skip 1 and 2. It is released, and an issue is opened for a later review.
+# If anything fails, nothing is published and an issue says why.
+#
+# SINGLE_APPROVER_UNTIL (YYYY-MM-DD, optional): a time-boxed exception for teams with only one reviewer. Until that
+# date condition 2 is not enforced, every release without a second approval is listed in an issue, and from the next
+# day a second approval is required again. Leave it empty to always require a second approval.
+#
+# Run by hand with "exception" set to accept specific commits that reached main without a pull request; the reason
+# is recorded in an issue.
+#
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
+name: Release gate
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      exception:
+        description: "Commits (space separated SHAs) to accept without a pull request. Leave empty normally."
+        required: false
+        default: ""
+      reason:
+        description: "Why the exception is needed (required with exception)"
+        required: false
+        default: ""
+permissions:
+  contents: write
+  issues: write
+  pull-requests: read
+  checks: read
+concurrency:
+  group: release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      EXCEPTION: ${{ inputs.exception }}
+      REASON: ${{ inputs.reason }}
+      PRODUCTION_BRANCH: live
+      DEV_BRANCH: dev
+      CHECK_NAME: Quick checks
+      SINGLE_APPROVER_UNTIL: ""
+      TZ: UTC
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Check every change since the last release
+        id: gate
+        run: |
+          set -euo pipefail
+          if [ -n "$EXCEPTION" ] && [ ${#REASON} -lt 10 ]; then echo "An exception needs a reason of at least 10 characters"; exit 1; fi
+          : > problems.txt; : > emergencies.txt; : > released.txt; : > single.txt
+          single=0
+          if [ -n "${SINGLE_APPROVER_UNTIL:-}" ]; then
+            today=$(date +%F)
+            [[ "$today" < "$SINGLE_APPROVER_UNTIL" || "$today" == "$SINGLE_APPROVER_UNTIL" ]] && single=1
+          fi
+          if git rev-parse -q --verify "origin/$PRODUCTION_BRANCH" >/dev/null; then
+            base="origin/$PRODUCTION_BRANCH"
+            if ! git merge-base --is-ancestor "$base" HEAD; then
+              echo "- $PRODUCTION_BRANCH has commits that are not on main. Someone pushed to it directly." >> problems.txt
+            fi
+            commits=$(git rev-list --first-parent --reverse "$base..HEAD")
+          else
+            echo "First release: $PRODUCTION_BRANCH does not exist yet, checking the latest change only."
+            commits=$(git rev-parse HEAD)
+          fi
+          if [ -z "$commits" ] && [ ! -s problems.txt ]; then echo "Nothing new to release."; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0; fi
+          for sha in $commits; do
+            short=${sha:0:7}
+            if [[ " $EXCEPTION " == *" $sha "* || " $EXCEPTION " == *" $short "* ]]; then
+              echo "- $short accepted as an exception: $REASON" >> emergencies.txt; continue
+            fi
+            pr=$(gh api "repos/$REPO/commits/$sha/pulls" --jq '[.[] | select(.merged_at != null and .base.ref == "main")][0] // empty')
+            if [ -z "$pr" ]; then echo "- $short reached main without a pull request" >> problems.txt; continue; fi
+            num=$(jq -r .number <<<"$pr"); head=$(jq -r .head.ref <<<"$pr"); author=$(jq -r .user.login <<<"$pr"); headsha=$(jq -r .head.sha <<<"$pr")
+            emergency=$(jq -r '[.labels[].name] | index("emergency") != null' <<<"$pr")
+            approvers=$(gh api "repos/$REPO/pulls/$num/reviews" --paginate --jq "[.[] | select(.state == \"APPROVED\" and .user.login != \"$author\") | .user.login] | unique | join(\",\")")
+            checks=$(gh api "repos/$REPO/commits/$headsha/check-runs" --jq "[.check_runs[] | select(.name == \"$CHECK_NAME\")] | if length == 0 then \"missing\" else (if all(.conclusion == \"success\") then \"success\" else \"failed\" end) end")
+            if [ "$emergency" = "true" ]; then
+              echo "- #$num ($short) by $author released as an emergency change (from $head, approved by: ${approvers:-nobody yet})" >> emergencies.txt
+              echo "- #$num" >> released.txt; continue
+            fi
+            ok=1
+            [ "$head" = "$DEV_BRANCH" ] || { echo "- #$num ($short) came from $head, not $DEV_BRANCH, so it was never on the dev site" >> problems.txt; ok=0; }
+            if [ -z "$approvers" ]; then
+              if [ $single = 1 ]; then echo "- #$num ($short) by $author, released without a second approval" >> single.txt
+              else echo "- #$num ($short) by $author has no approval from a second person" >> problems.txt; ok=0; fi
+            fi
+            [ "$checks" = "success" ] || { echo "- #$num ($short) $CHECK_NAME: $checks" >> problems.txt; ok=0; }
+            [ $ok = 1 ] && echo "- #$num by $author, approved by ${approvers:-nobody (single approver exception)}" >> released.txt
+          done
+          if [ -s problems.txt ]; then echo "blocked=1" >> "$GITHUB_OUTPUT"; cat problems.txt; exit 0; fi
+          echo "blocked=0" >> "$GITHUB_OUTPUT"
+      - name: Publish (move the production branch to main)
+        if: steps.gate.outputs.skip != '1' && steps.gate.outputs.blocked == '0'
+        run: |
+          git push origin "HEAD:refs/heads/$PRODUCTION_BRANCH"
+          echo "Released $(git rev-parse --short HEAD)."
+          cat released.txt
+      - name: Open an issue for emergency changes and exceptions
+        if: steps.gate.outputs.skip != '1' && steps.gate.outputs.blocked == '0'
+        run: |
+          if [ -s emergencies.txt ]; then
+            gh issue create --repo "$REPO" --title "Review emergency change released $(date -u +%F)" \
+              --body "$(printf 'These changes were released without the normal dev and approval steps. A second person reviews them within 2 business days, then closes this issue with a comment.\n\n%s\n\nRun: %s/%s/actions/runs/%s' "$(cat emergencies.txt)" "$GITHUB_SERVER_URL" "$REPO" "$GITHUB_RUN_ID")"
+          fi
+      - name: Record releases made under the single approver exception
+        if: steps.gate.outputs.skip != '1' && steps.gate.outputs.blocked == '0'
+        run: |
+          if [ -s single.txt ]; then
+            gh issue create --repo "$REPO" --title "Released without a second approval $(date -u +%F)" \
+              --body "$(printf 'These changes came through %s and passed %s, and were released without a second approval under the exception in force until %s. A second reviewer checks them later, then closes this issue with a comment.\n\n%s\n\nRun: %s/%s/actions/runs/%s' "$DEV_BRANCH" "$CHECK_NAME" "$SINGLE_APPROVER_UNTIL" "$(cat single.txt)" "$GITHUB_SERVER_URL" "$REPO" "$GITHUB_RUN_ID")"
+          fi
+      - name: Blocked, explain why
+        if: steps.gate.outputs.blocked == '1'
+        run: |
+          gh issue create --repo "$REPO" --title "Release blocked $(date -u +%F): change not approved" \
+            --body "$(printf 'Nothing was published. Production still runs the last approved release.\n\n%s\n\nFix: revert the change on main through a pull request from %s, or get it approved, then run the Release gate again. Only if the change itself is fine, run the Release gate by hand with the commit in exception and a reason.\n\nRun: %s/%s/actions/runs/%s' "$(cat problems.txt)" "$DEV_BRANCH" "$GITHUB_SERVER_URL" "$REPO" "$GITHUB_RUN_ID")"
+          exit 1

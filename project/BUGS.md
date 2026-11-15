@@ -1,6 +1,6 @@
 # Bug log
 
-43 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
+44 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
 
 ## Summary
 
@@ -8,12 +8,12 @@
 |---|---|
 | High | 5 |
 | Medium | 21 |
-| Low | 17 |
+| Low | 18 |
 
 | Type | Count |
 |---|---|
 | Security | 14 |
-| Functional | 11 |
+| Functional | 12 |
 | UI | 7 |
 | Accessibility | 3 |
 | Operational | 2 |
@@ -26,7 +26,7 @@
 |---|---|
 | Security audit | 7 |
 | Pen test | 5 |
-| Product owner review | 4 |
+| Product owner review | 5 |
 | Lighthouse | 3 |
 | UAT on phone | 3 |
 | Live smoke test | 2 |
@@ -98,6 +98,7 @@
 | B40 | Blog analytics did not fit a phone | Low | UI | S068 | UAT on phone | Nov 14 |
 | B41 | Home hero animation overlapped its own labels and drifted off the grid | Low | UI | S009 | Product owner review | Nov 13 |
 | B43 | Site check flagged links to server-rendered routes as broken | Low | Test | S046 | Test run | Nov 13 |
+| B44 | A replaced team photo kept showing the old picture | Low | Functional | S019 | Product owner review | Nov 15 |
 
 ## Root cause and prevention
 
@@ -444,3 +445,11 @@
 - **Root cause:** The link checker only looked for a static file for each link, so /blog, served by a server function, failed
 - **Fix:** A link counts as valid when a static file or a server function serves it
 - **Prevention:** Testing rule: link checks know your server routes
+
+### B44 A replaced team photo kept showing the old picture
+
+- **Severity / type:** Low / Functional  (epic E04, story S019)
+- **Found by:** Product owner review, Nov 15
+- **Root cause:** The new photo was saved under the same file names; images are not fingerprinted and are cached for a long time, so browsers and the CDN kept serving the old copy
+- **Fix:** New file names for the new photo, with every page and the JSON-LD reference updated
+- **Prevention:** Building rule: when an image changes, give it a new file name or fingerprint it

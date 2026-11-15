@@ -1,6 +1,6 @@
 # Backlog
 
-14 epics, 24 features, 70 user stories, 196 sub-tasks and 43 bugs. All items are **Done**.
+14 epics, 25 features, 76 user stories, 215 sub-tasks and 44 bugs. All items are **Done**.
 Bugs are listed under the story where they were found and in full in [BUGS.md](BUGS.md).
 
 ## Epics
@@ -9,14 +9,14 @@ Bugs are listed under the story where they were found and in full in [BUGS.md](B
 |---|---|---|---|---|---|
 | [E01 Launch site](#e01-launch-site) | Ship a fast, credible public site so visitors can find courses and register interest. | 2 | 5 | 2 | Nov 5 to 6 |
 | [E02 Brand and design system](#e02-brand-and-design-system) | A consistent, accessible visual identity across site, portal and email. | 2 | 7 | 3 | Nov 6 to 14 |
-| [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 6 | 2 | Nov 6 to 12 |
-| [E04 Hosting, CI and deploys](#e04-hosting-ci-and-deploys) | Free, reliable hosting with controlled, countable releases. | 2 | 5 | 4 | Nov 6 to 11 |
-| [E05 Accounts and access](#e05-accounts-and-access) | Safe sign in with the right access for every role. | 2 | 7 | 7 | Nov 6 to 11 |
+| [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 7 | 2 | Nov 6 to 12 |
+| [E04 Hosting, CI and deploys](#e04-hosting-ci-and-deploys) | Free, reliable hosting with controlled, countable releases. | 3 | 7 | 5 | Nov 6 to 15 |
+| [E05 Accounts and access](#e05-accounts-and-access) | Safe sign in with the right access for every role. | 2 | 9 | 7 | Nov 6 to 12 |
 | [E06 Learning platform](#e06-learning-platform) | Everything a learner and instructor need to run a live course. | 2 | 5 | 3 | Nov 6 to 10 |
 | [E07 Commerce](#e07-commerce) | Take payment safely and fairly, in the buyer's currency. | 2 | 4 | 3 | Nov 6 to 11 |
 | [E08 Careers marketplace](#e08-careers-marketplace) | Connect learners and employers with real Canadian AI and tech jobs. | 2 | 4 | 2 | Nov 7 to 10 |
 | [E09 Support and engagement](#e09-support-and-engagement) | Help visitors fast and keep them coming back. | 2 | 14 | 6 | Nov 7 to 14 |
-| [E10 Privacy and compliance](#e10-privacy-and-compliance) | Collect only what we need, keep it only as long as stated, and prove it. | 2 | 4 | 1 | Nov 10 to 14 |
+| [E10 Privacy and compliance](#e10-privacy-and-compliance) | Collect only what we need, keep it only as long as stated, and prove it. | 2 | 5 | 1 | Nov 10 to 14 |
 | [E11 Quality engineering](#e11-quality-engineering) | Know the product works before anyone else finds out it doesn't. | 1 | 3 | 4 | Nov 6 to 13 |
 | [E12 Security](#e12-security) | Find and fix weaknesses before attackers do. | 1 | 2 | 3 | Nov 6 to 11 |
 | [E13 Performance](#e13-performance) | Fast on a mid-range phone, cheap to serve. | 1 | 1 | 3 | Nov 10 to 11 |
@@ -318,6 +318,21 @@ As a reader seeing a shared link, I want the preview to show the article's own i
 - [x] S063-T2 Absolute URL and preview sizing
 - [x] S063-T3 Image in the article JSON-LD
 
+#### S076  ·  Done  ·  Nov 12
+
+As a site that reads the blog feed, I want each article's cover image in the feed so that I can show it next to the headline.
+
+**Acceptance criteria**
+
+- [x] Cover image as Media RSS content with width, height and alt text
+- [x] Site-relative image URLs made absolute
+- [x] Every value XML-escaped
+
+**Sub-tasks**
+
+- [x] S076-T1 Media RSS namespace and item image
+- [x] S076-T2 Absolute, sized image URLs
+
 ### F03.2 Migration hygiene
 
 #### S014  ·  Done  ·  Nov 10
@@ -349,7 +364,7 @@ As a Canadian visitor, I want the site marked for my locale so that search shows
 ## E04 Hosting, CI and deploys
 
 **Goal:** Free, reliable hosting with controlled, countable releases.  
-**Delivered:** Nov 6 to 11
+**Delivered:** Nov 6 to 15
 
 ### F04.1 Platform migration
 
@@ -424,6 +439,7 @@ As a visitor, I want the latest code on my device so that I never run a stale ap
 **Bugs found**
 
 - B08 (Medium, Functional): Returning visitors kept stale CSS and JS after releases
+- B44 (Low, Functional): A replaced team photo kept showing the old picture
 
 #### S020  ·  Done  ·  Nov 11
 
@@ -439,10 +455,49 @@ As a job seeker, I want job listings refreshed hourly so that I see current open
 - [x] S020-T1 Scheduled CI job
 - [x] S020-T2 Retention sweep on the same schedule
 
+### F04.3 Change management
+
+#### S071  ·  Done  ·  Nov 12 to 15
+
+As the product owner, I want every change to reach production only through a release gate so that no untested or unreviewed code goes live.
+
+**Acceptance criteria**
+
+- [x] A dev site with its own database, file bucket and test payment keys
+- [x] Quick checks run on every pull request into dev and main
+- [x] The production branch moves only when each change came from dev, was approved by a second person and passed the checks
+- [x] Emergency changes are released and logged for review within 2 business days
+- [x] A direct push to the production branch opens an issue at once
+- [x] A time-boxed single approver exception ends by itself on its date and logs every release it allows
+
+**Sub-tasks**
+
+- [x] S071-T1 Dev branch and dev environment
+- [x] S071-T2 Quick checks workflow
+- [x] S071-T3 Release gate workflow
+- [x] S071-T4 Direct push alert
+- [x] S071-T5 Single approver exception with an end date
+- [x] S071-T6 Pull request template and runbook update
+
+#### S072  ·  Done  ·  Nov 12
+
+As a visitor, I want dev and preview sites hidden from search engines and clearly labelled so that I never land on test data or mistake it for the real site.
+
+**Acceptance criteria**
+
+- [x] Non-production builds send noindex headers and a robots.txt that blocks everything
+- [x] No sitemap or llms.txt on non-production builds
+- [x] Every screen of the dev site shows a development banner
+
+**Sub-tasks**
+
+- [x] S072-T1 Branch check in the build step
+- [x] S072-T2 Environment flag and banner
+
 ## E05 Accounts and access
 
 **Goal:** Safe sign in with the right access for every role.  
-**Delivered:** Nov 6 to 11
+**Delivered:** Nov 6 to 12
 
 ### F05.1 Sign up and sign in
 
@@ -578,6 +633,40 @@ As an admin, I want the curriculum builder inside Admin and limited to admins an
 
 - [x] S056-T1 Curricula tab in Admin
 - [x] S056-T2 API route limited to staff roles
+
+#### S073  ·  Done  ·  Nov 12
+
+As an admin, I want one page listing everyone with staff access and recording each review so that access and log reviews leave dated evidence.
+
+**Acceptance criteria**
+
+- [x] Everyone above the basic role listed with MFA status, last activity and flags (MFA off, unused for 90 days)
+- [x] Security events of the last 90 days shown
+- [x] Quarterly access reviews and monthly log reviews recorded in the audit log with a note
+- [x] Review reminder issues open on a schedule with a checklist
+
+**Sub-tasks**
+
+- [x] S073-T1 Security API and admin page
+- [x] S073-T2 Review records in the audit log
+- [x] S073-T3 Scheduled review reminder workflow
+
+#### S074  ·  Done  ·  Nov 12
+
+As an admin, I want an email alert on every change to staff access and every MFA reset so that an unexpected change is seen the same day.
+
+**Acceptance criteria**
+
+- [x] Granting, removing or lowering a privileged role emails every admin with who changed whom, from what to what
+- [x] MFA resets alert every admin
+- [x] Turning an account off or lowering its role ends its sessions
+- [x] A failed alert never blocks the change
+
+**Sub-tasks**
+
+- [x] S074-T1 Alert on privileged role changes
+- [x] S074-T2 Alert on MFA resets
+- [x] S074-T3 End sessions when access goes down
 
 ## E06 Learning platform
 
@@ -1138,6 +1227,22 @@ As an account holder, I want to be told when policies change so that I'm never s
 - [x] S043-T1 Policy versioning
 - [x] S043-T2 Scheduled summary email
 - [x] S043-T3 Updates page
+
+#### S075  ·  Done  ·  Nov 12
+
+As the product owner, I want short written security policies that describe what we actually do so that an auditor or customer can test each control against evidence.
+
+**Acceptance criteria**
+
+- [x] Ten policies: information security, access control, change management, logging and monitoring, incident response, business continuity, vendor management, risk assessment, data classification, acceptable use
+- [x] Each has an owner, a version, an effective date and a yearly review
+- [x] Templates for the records the policies require
+
+**Sub-tasks**
+
+- [x] S075-T1 Write the ten policies
+- [x] S075-T2 Records templates
+- [x] S075-T3 Link policies from the security guide and runbook
 
 ### F10.2 Data rights and retention
 

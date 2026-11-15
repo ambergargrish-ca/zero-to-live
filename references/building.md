@@ -40,6 +40,7 @@ A page that bypasses the layout is a compliance bug: it loses the privacy link a
 - **Sound needs a user gesture.** Browsers block audio until the visitor clicks, taps or types. Create or resume the `AudioContext` on the first such event and treat sound as optional: the badge and text still carry the message.
 - **Diagrams as HTML, not images.** Draw workflow, comparison and statistics diagrams from short text blocks in the content as HTML and CSS. They stay sharp on any screen, follow your design tokens and themes, and screen readers and search engines can read them.
 - **Fingerprint** CSS and JS (`app.js?v=3f2a9c1b`) at build time, and cache `/assets/*` for a week or more. After changing a shared asset, rebuild every page that loads it: a page still carrying the old hash keeps serving the old file, so the change never reaches browsers. `scripts/compliance_check.py` fails when a page's hash does not match the file.
+- **Replace an image under a new name.** Images are often served without a hash in the URL and with a long cache, so overwriting `team.jpg` with a new photo leaves browsers and the CDN showing the old one for days. When an image's content changes, give it a new file name (or fingerprint images like CSS and JS) and update every reference, including JSON-LD.
 - **Signed-in state on static pages.** To show an account menu instead of "Sign in" without slowing every visit, have the app set a harmless hint in browser storage at sign in (and clear it at sign out). Public pages only call the session endpoint when the hint is there, and show nothing until the server confirms the session. The hint is never trusted for access.
 
 ## SEO and AI-crawler basics
@@ -54,6 +55,7 @@ Ship these with the first deploy:
 | `sitemap.xml` | Every indexable page with `lastmod`, and never a page marked `noindex` (search consoles flag the contradiction). Filter the sitemap by each page's robots tag at build time rather than keeping a separate list |
 | `llms.txt` | Plain-text summary of the site and links to key pages for AI agents |
 | `og:image`, `twitter:image`, `og:image:alt` | A share image per page or article (about 1200x630, absolute URL), not one image for the whole site. Add the same image to the article's JSON-LD |
+| RSS feed | Each item carries its cover image as Media RSS (`xmlns:media="http://search.yahoo.com/mrss/"`, `<media:content url="..." medium="image" width="1200" height="630">` with the alt text in `<media:description>`), so feed readers and partner sites can show it. Make site-relative image URLs absolute and XML-escape every value |
 | JSON-LD | `Organization`, `Person`, `Product`/`Course`, `FAQPage`, `BreadcrumbList` as they apply |
 | `noindex` | On sign-in, dashboards, preview deploy URLs and any `/md/` agent copies |
 

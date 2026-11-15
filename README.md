@@ -36,11 +36,12 @@ zero-to-live/
 ├── templates/
 │   ├── checks.json                  test map and suite config
 │   ├── _headers                     security headers starting point
-│   └── gitignore
+│   ├── gitignore
+│   └── github/                      release gate and direct push alert workflows
 └── project/                         project management view of the case study
     ├── README.md                    timeline, hierarchy, how to import
-    ├── BACKLOG.md                   14 epics, 70 stories, 196 sub-tasks
-    ├── BUGS.md                      43 bugs with root cause and prevention
+    ├── BACKLOG.md                   14 epics, 76 stories, 215 sub-tasks
+    ├── BUGS.md                      44 bugs with root cause and prevention
     └── backlog.csv                  Jira-importable backlog
 ```
 

@@ -39,7 +39,7 @@ Run `scripts/compliance_check.py` on every change. It fails on secrets in the re
 Run `scripts/run_suite.py` (all suites, fresh local database per suite, one report) and `scripts/lighthouse.sh` against the local build. Targets: Accessibility 100, Performance 90+ on mobile, Best Practices 95+, SEO 90+ on indexable pages. Read `references/testing.md` and `references/accessibility-performance.md`.
 
 ### 6. Deploy (batched)
-Every push to the production branch is one build. Collect changes, verify once, deploy once. `scripts/deploy_batch.sh` keeps the count and refuses to deploy a batch that has not passed the full tier. Read `references/deploys.md`, including rollback.
+Every push to the production branch is one build. Collect changes, verify once, deploy once. `scripts/deploy_batch.sh` keeps the count and refuses to deploy a batch that has not passed the full tier. Once others depend on the site, production moves only through a release gate (change from dev, second approval, checks green). Read `references/deploys.md`, including rollback.
 
 ## Key rules
 
@@ -66,7 +66,7 @@ Every push to the production branch is one build. Collect changes, verify once, 
 | `scripts/make_routes.py` | Write `_routes.json` so static files skip Functions |
 | `scripts/deploy_batch.sh` | Count changes, gate on the full tier, deploy once |
 
-Config examples live in `templates/`.
+Config examples live in `templates/`, including a GitHub Actions release gate in `templates/github/`.
 
 ## References
 
@@ -79,4 +79,4 @@ Config examples live in `templates/`.
 | `references/testing.md` | Choosing what to run; writing suites |
 | `references/accessibility-performance.md` | Lighthouse targets and fixes |
 | `references/security.md` | Any change to auth, roles, data, uploads or payments |
-| `references/deploys.md` | Batching, build budget, rollback |
+| `references/deploys.md` | Batching, build budget, dev environment, release gate, rollback |

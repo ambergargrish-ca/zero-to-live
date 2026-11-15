@@ -20,6 +20,7 @@ Role checks on obvious admin routes are the easy part. Check one level down as w
 - [ ] **Sensitive fields inside allowed pages.** A role allowed to open a dashboard may still not be allowed to see every number on it. Filter fields on the server by role, not in the UI.
 - [ ] **Step-up requirements apply to every route.** If a role must have MFA, every route for that role refuses until MFA is set up, including read-only ones.
 - [ ] **Security changes end old sessions.** Turning on MFA, changing a password or resetting it signs out every other session for that account.
+- [ ] **Lower access takes effect at once.** Turning an account off or lowering its role deletes its sessions, so the old rights stop now rather than when the cookie expires.
 - [ ] **Capacity abuse.** Limited resources (seats, stock, slots) cannot be held indefinitely by unpaid or abandoned checkouts; cap holds per account and expire them.
 - [ ] **Payment state machines.** Webhooks are verified by signature, handled idempotently, and order states only move forward along defined transitions, whatever order events arrive in.
 
@@ -65,6 +66,17 @@ Role checks on obvious admin routes are the easy part. Check one level down as w
 - [ ] A committed secret is rotated immediately; deleting the file does not remove it from history.
 - [ ] `npm audit` (or equivalent) is clean; dependencies pinned by a lock file; reviewed quarterly.
 - [ ] Development bypass flags are honoured only with `DEV_MODE`, and production refuses to start with it set.
+
+## Access reviews and alerts
+
+- [ ] Admins get an email alert on every change to a role that can see other people's data (support, manager, admin), whether granted, removed or lowered, and on every MFA reset. The alert says who changed whom, from what to what, and where to look if it was not expected. Sending it never blocks or fails the change itself.
+- [ ] An admin-only security page lists everyone above the basic user role with their MFA status, last activity and flags (MFA off, unused for 90 days), plus the security events of the last 90 days.
+- [ ] A quarterly access review and a monthly log review are recorded from that page as audit log rows with a short note, so there is dated proof of who reviewed what. Scheduled issues (a monthly cron in GitHub Actions) remind you, with a checklist covering the platform and every outside service: who has access, and is MFA on for each person.
+- [ ] Anyone who leaves: account removed in every service, shared passwords and keys changed.
+
+## Written policies
+
+If customers or an auditor will ask about security (SOC 2, ISO 27001, a vendor questionnaire), write short policies that describe what you actually do, so each one can be tested against real evidence: information security, access control, change management, logging and monitoring, incident response, business continuity (backups and restore tests), vendor management, risk assessment, data classification and acceptable use. Keep them in Git so the history is the change log, approve changes through the same pull request process as code, give each an owner, a version and an effective date, and review them yearly. Keep templates for the records they require (reviews, incidents, restore tests) next to them.
 
 ## Logging
 

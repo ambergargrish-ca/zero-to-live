@@ -1,0 +1,28 @@
+# Direct push alert for the production branch (references/deploys.md, Change management).
+# Copy to .github/workflows/guard-production.yml and set the branch to your PRODUCTION_BRANCH.
+#
+# The release gate moves the production branch with the workflow's own GITHUB_TOKEN, and pushes made with that token
+# never start other workflows. So any run of this workflow means a person pushed to production directly, skipping
+# review. It opens an issue straight away (a detective control).
+#
+# Part of zero-to-live (https://github.com/ambergargrish-ca/zero-to-live). Copyright (c) 2026 Amber Gargrish. MIT License.
+name: Direct push to production
+on:
+  push:
+    branches: [live]
+permissions:
+  issues: write
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ACTOR: ${{ github.actor }}
+      SHA: ${{ github.sha }}
+      COMPARE: ${{ github.event.compare }}
+    steps:
+      - name: Open an issue
+        run: |
+          gh issue create --repo "${{ github.repository }}" --title "Direct push to production by $ACTOR" \
+            --body "$(printf '%s pushed %s straight to the production branch, skipping dev and approval. It is already live.\n\nCompare: %s\n\nA second person reviews it now. If it should not be live, revert it through dev and main, then run the Release gate. Record what happened in this issue, and follow the incident response policy if it was not authorised.' "$ACTOR" "$SHA" "$COMPARE")"
