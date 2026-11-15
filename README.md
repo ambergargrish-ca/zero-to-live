@@ -44,6 +44,10 @@ zero-to-live/
     └── backlog.csv                  Jira-importable backlog
 ```
 
+## Companion skill
+
+[brand-kit-builder](https://github.com/ambergargrish-ca/brand-kit-builder): build the brand kit (mark, colour, type, voice, BRAND.md) before you build the site.
+
 ## Install
 
 **Claude Code:** clone into your skills folder.
