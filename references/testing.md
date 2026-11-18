@@ -6,6 +6,20 @@ Two tiers. The quick tier runs on every change and takes seconds to a few minute
 
 Running every suite after a one-line copy change wastes time and, when an AI agent is doing the work, burns a lot of tokens on output nobody reads. Running nothing ships regressions. The answer is to run what the change can break, then everything before it goes live.
 
+## Measure what checks cost and catch
+
+Tiering is only worth it if it saves more than it misses. Every run of the quick tier, the full tier and the post-deploy check, and every deploy and rollback, appends one line to `.deploy/telemetry.jsonl` (local only, never sent anywhere): which tier, minutes taken, checks passed and failed, files changed, and optionally AI tokens and cost.
+
+```bash
+python3 scripts/telemetry.py report            # last 30 days
+```
+
+The report shows, per tier: runs, minutes, problems caught and minutes per catch; deploys, rollbacks and the change failure rate (deploys that failed the post-deploy check); and an estimate of the minutes the quick tier saved versus running the full tier on every change.
+
+**Adding AI cost.** Scripts can't see what an agent spent, so add it yourself: set `ZTL_TOKENS` and `ZTL_COST_USD` before a run, or log a session total afterwards with `python3 scripts/telemetry.py log --event agent --tokens 180000 --cost 1.25`. In Claude Code, `/cost` shows a session's spend, and turning on its OpenTelemetry export (`CLAUDE_CODE_ENABLE_TELEMETRY=1`) emits `claude_code.token.usage` and `claude_code.cost.usage` for team dashboards. The report then shows cost per deploy and cost per problem caught before deploy.
+
+Read it monthly. A quick tier that never catches anything is mapped too narrowly; a full tier that catches what the quick tier should have is a missing mapping; a rising change failure rate means a pre-deploy gate is missing.
+
 ## Quick tier: every change
 
 `scripts/quick_check.py` reads the diff (`git diff --name-only` against the last deployed commit, or `HEAD` plus uncommitted changes) and runs only the commands whose patterns match. Configure the mapping in `checks.json`:

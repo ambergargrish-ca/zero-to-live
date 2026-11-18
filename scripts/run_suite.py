@@ -20,6 +20,12 @@ Writes tests/eval/report.md (for people) and tests/eval/report.json (commit, tim
 import datetime, json, re, subprocess, sys, time
 from pathlib import Path
 
+try:  # cost and catch log (scripts/telemetry.py); optional, never blocks a check
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, str(Path(__file__).resolve().parent)); import telemetry
+except Exception:
+    telemetry = None
+
 ROOT = Path.cwd()
 OUT = ROOT / "tests" / "eval"
 
@@ -104,6 +110,9 @@ def main():
     (OUT / "report.md").write_text("\n".join(md) + "\n")
     (OUT / "report.json").write_text(json.dumps({"commit": commit, "dirty": dirty, "time": started.isoformat(timespec="seconds"),
                                                  "all_ok": ok, "passed": passed, "total": total, "suites": rows}, indent=1) + "\n")
+    if telemetry:
+        telemetry.log("full", ok=ok, passed=passed, failed=total - passed, suites=len(rows),
+                      seconds=round((datetime.datetime.now() - started).total_seconds(), 1))
     print(f"\nReport: tests/eval/report.md. {passed} of {total} checks passed. {'ALL PASSED' if ok else 'FAILED'}")
     return 0 if ok else 1
 

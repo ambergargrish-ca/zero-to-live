@@ -12,12 +12,13 @@ The workflow, rules and scripts are host-neutral. Only the platform glue changes
 | Redirects | `_redirects` | `_redirects` | `vercel.json` | CloudFront Functions | server config |
 | Secrets | Pages secrets | Environment variables (secret) | Environment variables | Secrets Manager / SSM | env file outside repo |
 | Build budget | Builds per month | Build minutes / credits | Build minutes | Pay per use | Your CI |
+| Instant rollback | Dashboard or Pages API | Publish an earlier deploy (dashboard or API) | `vercel rollback` | Redeploy the previous artifact | Keep the previous release folder and switch a symlink |
 
 ## What changes per host
 
 - **`scripts/serve_local.sh`:** swap `wrangler pages dev` for `netlify dev`, `vercel dev`, `sam local`, or your app server. Keep the health-check wait.
 - **`scripts/make_routes.py`:** Cloudflare only. Other hosts serve static files without invoking functions by default.
-- **`scripts/deploy_batch.sh`:** set `DEPLOY_CMD` (for example `netlify deploy --prod --dir dist`) or keep the git-push trigger. Set `BUILD_LIMIT` to your plan's monthly allowance, or to a cost cap you choose.
+- **`scripts/deploy_batch.sh`:** set `DEPLOY_CMD` (for example `netlify deploy --prod --dir dist`) or keep the git-push trigger. Set `BUILD_LIMIT` to your plan's monthly allowance, or to a cost cap you choose. For one-command rollback, set `ROLLBACK_CMD` to your host's rollback (the Cloudflare API path is built in).
 - **`scripts/compliance_check.py`:** point `headers_files` in `checks.json` at `netlify.toml`, `vercel.json` or your server config.
 
 ## Keep headers in one place

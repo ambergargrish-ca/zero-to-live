@@ -75,12 +75,21 @@ Add a pull request template that asks what changed, how it was tested on the dev
 - [ ] No dev flags in production environment variables
 - [ ] The change reached production through the release gate, not a direct push
 
-## After every production deploy
+## After every production deploy: health check and rollback
 
-- [ ] Build finished green (check the commit status on the Git host or the host dashboard)
-- [ ] Open the home page, a key journey and the sign-in page on the live domain
-- [ ] Check response headers on the live domain (`curl -sI https://example.com/ | grep -i content-security`)
-- [ ] Watch error logs for 15 minutes
+Pre-deploy gates catch most problems, but some only exist in production: a binding or secret set on the wrong environment, a header rule that replaced another, a route that only worked locally. Close the loop automatically:
+
+```bash
+python3 scripts/post_deploy_check.py --wait --rollback
+# or let the deploy run it: POST_DEPLOY=1 bash scripts/deploy_batch.sh deploy
+```
+
+1. **Wait for the new build, not the old one.** Have the build write the commit it was built from to a small public file (`echo "$CF_PAGES_COMMIT_SHA" > dist/version.txt`, or `git rev-parse HEAD`). `--wait` polls it until it shows the commit you deployed, so a check never passes against the previous build while the new one is still building.
+2. **Check what users need.** For each page in the `post_deploy` block of `checks.json`: the expected status, a piece of text that proves the page rendered (`<h1`, `"ok":true`), the required security headers, and a response time limit. Include the home page, sign in, one key journey and a health route that touches the database.
+3. **Retry before failing.** A page gets a couple of retries, 10 seconds apart, so a cold start doesn't trigger a rollback.
+4. **Roll back on failure.** `--rollback` runs `bash scripts/deploy_batch.sh rollback` (below). Run the check again afterwards to confirm the old build is healthy, then fix forward on the dev site.
+
+Still worth doing by hand: watch error logs for 15 minutes, and walk one journey on a real phone after any change to sign in or payments.
 
 ## Rollback
 
@@ -92,6 +101,13 @@ Add a pull request template that asks what changed, how it was tested on the dev
 | Leaked secret | Rotate it in the provider and the secret store first, then clean history. |
 
 Prefer the host's instant rollback for emergencies: it does not use a build and takes seconds.
+
+**One command:** `bash scripts/deploy_batch.sh rollback`.
+- **Cloudflare Pages:** set `CF_API_TOKEN` (an API token with the *Cloudflare Pages: Edit* permission, stored in your secret store or CI secrets, never in the repo), `CF_ACCOUNT_ID` and `CF_PAGES_PROJECT`. The script reads which deployment is live, picks the newest successful production deployment before it, and calls the Pages rollback API (`POST /accounts/{account_id}/pages/projects/{project}/deployments/{id}/rollback`). `ROLLBACK_TO=<deployment id>` picks a specific one.
+- **Other hosts:** set `ROLLBACK_CMD` to the host's own rollback, for example `vercel rollback --yes`.
+- **Nothing set:** it prints the dashboard steps.
+
+A rollback restores code, not data. If the bad release ran a database migration, check that the old code still works with the new schema (additive migrations make this safe), or restore the database too.
 
 ## Scheduled jobs on the minute
 

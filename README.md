@@ -10,6 +10,8 @@ A Claude skill for taking a website or web app from idea to production: plan, bu
 - **Accessibility and performance:** Lighthouse targets as release gates, checklists, common fixes
 - **Security:** a checklist covering API design, object-level authorization, sessions, MFA, headers, uploads, rate limits, secrets and privacy by design
 - **Batched deploys:** a build budget, a test gate on the exact commit, and a rollback plan
+- **After the deploy:** a live health check that waits for the new build, checks key pages, and rolls back with one command
+- **Cost and catch log:** what each check tier costs in minutes (and AI tokens, if you add them) and what it catches, so test effort keeps matching risk
 
 ## Layout
 
@@ -32,7 +34,9 @@ zero-to-live/
 │   ├── serve_local.sh               local Pages server with D1 and R2
 │   ├── lighthouse.sh                Lighthouse with pass/fail thresholds
 │   ├── make_routes.py               Cloudflare _routes.json for static files
-│   └── deploy_batch.sh              batch counter, build budget, test gate
+│   ├── deploy_batch.sh              batch counter, build budget, test gate, one-command rollback
+│   ├── post_deploy_check.py         live health check after deploy, automatic rollback
+│   └── telemetry.py                 local cost and catch log per check run
 ├── templates/
 │   ├── checks.json                  test map and suite config
 │   ├── _headers                     security headers starting point
@@ -40,7 +44,7 @@ zero-to-live/
 │   └── github/                      release gate and direct push alert workflows
 └── project/                         project management view of the case study
     ├── README.md                    timeline, hierarchy, how to import
-    ├── BACKLOG.md                   14 epics, 76 stories, 215 sub-tasks
+    ├── BACKLOG.md                   14 epics, 78 stories, 223 sub-tasks
     ├── BUGS.md                      44 bugs with root cause and prevention
     └── backlog.csv                  Jira-importable backlog
 ```
@@ -117,6 +121,10 @@ If this skill, its scripts or its checklists help your project, please credit it
 ```markdown
 Built with [zero-to-live](https://github.com/ambergargrish-ca/zero-to-live) by [Amber Gargrish](https://gargrish.com).
 ```
+
+## Ideas from the community
+
+The post-deploy health check with one-command rollback and the cost and catch log were suggested by readers of the launch write-up. Suggestions and pull requests are welcome: open an issue.
 
 ## License
 

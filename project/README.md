@@ -8,8 +8,8 @@ The platform went from a static launch site to a full learning and careers platf
 |---|---|
 | Epics | 14 |
 | Features | 25 |
-| User stories | 76 |
-| Sub-tasks | 215 |
+| User stories | 78 |
+| Sub-tasks | 223 |
 | Bugs found and fixed | 44 |
 | Automated checks passing before release | 1,298 |
 
@@ -47,6 +47,7 @@ Each story has acceptance criteria written as checks, so "done" means the criter
 | Nov 13 | Help chat greeting and new-message count, live chat only in staffed hours, home animation fits its grid, link check knows server routes, blog analytics with referring site by name only | E02, E09, E11 |
 | Nov 14 | Blog analytics fits phones, readable cookie banner in the app, brand kit and a rebrand of site, emails, certificates and covers, moving header logo that stops after one round | E02, E09, E10 |
 | Nov 15 | Release gate goes live with a time-boxed single approver exception, replaced team photo served under new file names | E04 |
+| Nov 18 | Skill gains a post-deploy health check with one-command rollback and a cost and catch log, from reader feedback | E14 |
 
 ## How the work was run
 

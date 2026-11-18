@@ -1,6 +1,6 @@
 # Backlog
 
-14 epics, 25 features, 76 user stories, 215 sub-tasks and 44 bugs. All items are **Done**.
+14 epics, 25 features, 78 user stories, 223 sub-tasks and 44 bugs. All items are **Done**.
 Bugs are listed under the story where they were found and in full in [BUGS.md](BUGS.md).
 
 ## Epics
@@ -20,7 +20,7 @@ Bugs are listed under the story where they were found and in full in [BUGS.md](B
 | [E11 Quality engineering](#e11-quality-engineering) | Know the product works before anyone else finds out it doesn't. | 1 | 3 | 4 | Nov 6 to 13 |
 | [E12 Security](#e12-security) | Find and fix weaknesses before attackers do. | 1 | 2 | 3 | Nov 6 to 11 |
 | [E13 Performance](#e13-performance) | Fast on a mid-range phone, cheap to serve. | 1 | 1 | 3 | Nov 10 to 11 |
-| [E14 Productisation: zero-to-live](#e14-productisation-zero-to-live) | Turn the build's methods into a reusable, citable open-source Claude skill. | 1 | 3 | 0 | Nov 11 |
+| [E14 Productisation: zero-to-live](#e14-productisation-zero-to-live) | Turn the build's methods into a reusable, citable open-source Claude skill. | 1 | 5 | 0 | Nov 11 to 18 |
 
 ## E01 Launch site
 
@@ -1418,7 +1418,7 @@ As a learner on a phone, I want pages and the portal to load quickly so that I d
 ## E14 Productisation: zero-to-live
 
 **Goal:** Turn the build's methods into a reusable, citable open-source Claude skill.  
-**Delivered:** Nov 11
+**Delivered:** Nov 11 to 18
 
 ### F14.1 Skill and repository
 
@@ -1466,3 +1466,39 @@ As a product leader, I want the project management view in the repo so that I ca
 
 - [x] S054-T1 Reconstruct backlog from history
 - [x] S054-T2 Publish under project/
+
+#### S077  ·  Done  ·  Nov 18
+
+As an operator, I want an automatic health check after every deploy, with a one-command rollback, so that a problem that slips past the pre-deploy gates is caught and undone in minutes.
+
+**Acceptance criteria**
+
+- [x] Waits until the live site serves the deployed commit before checking
+- [x] Checks status, page content, security headers and response time on key pages
+- [x] Retries before failing so a cold start does not trigger a rollback
+- [x] Rolls back to the last good production deployment with one command (Cloudflare API built in, any host via a command)
+
+**Sub-tasks**
+
+- [x] S077-T1 Post-deploy check script with version wait and retries
+- [x] S077-T2 Rollback subcommand using the Pages rollback API
+- [x] S077-T3 Optional automatic run after deploy
+- [x] S077-T4 Test against a fake live site and a mock API
+
+#### S078  ·  Done  ·  Nov 18
+
+As a product leader, I want a log of what each check run costs and catches, so that I can see the return on our testing effort and keep it matched to risk.
+
+**Acceptance criteria**
+
+- [x] Every quick, full and post-deploy run, deploy and rollback is logged locally
+- [x] Report shows minutes, catches, minutes per catch, change failure rate and minutes saved by tiering
+- [x] Optional AI tokens and cost give cost per deploy and per problem caught
+- [x] Nothing leaves the machine; logging can be turned off
+
+**Sub-tasks**
+
+- [x] S078-T1 Telemetry log and report script
+- [x] S078-T2 Hook into quick, full and post-deploy runs
+- [x] S078-T3 Log deploys and rollbacks
+- [x] S078-T4 Guide section on reading the numbers

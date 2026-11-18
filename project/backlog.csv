@@ -1038,3 +1038,29 @@ Story: S019
 Root cause: The new photo was saved under the same file names; images are not fingerprinted and are cached for a long time, so browsers and the CDN kept serving the old copy
 Fix: New file names for the new photo, with every page and the JSON-LD reference updated
 Prevention: Building rule: when an image changes, give it a new file name or fingerprint it",Done,Low,zero-to-live E04 functional
+350,233,Story,"S077 An automatic health check after every deploy, with a one-command rollback","As an operator, I want an automatic health check after every deploy, with a one-command rollback, so that a problem that slips past the pre-deploy gates is caught and undone in minutes.
+
+Acceptance criteria:
+- Waits until the live site serves the deployed commit before checking
+- Checks status, page content, security headers and response time on key pages
+- Retries before failing so a cold start does not trigger a rollback
+- Rolls back to the last good production deployment with one command (Cloudflare API built in, any host via a command)
+
+Feature: F14.1 Skill and repository. Delivered Nov 18.",Done,Medium,zero-to-live E14 F14.1
+351,350,Sub-task,S077-T1 Post-deploy check script with version wait and retries,,Done,Medium,zero-to-live E14
+352,350,Sub-task,S077-T2 Rollback subcommand using the Pages rollback API,,Done,Medium,zero-to-live E14
+353,350,Sub-task,S077-T3 Optional automatic run after deploy,,Done,Medium,zero-to-live E14
+354,350,Sub-task,S077-T4 Test against a fake live site and a mock API,,Done,Medium,zero-to-live E14
+355,233,Story,S078 A log of what each check run costs and catches,"As a product leader, I want a log of what each check run costs and catches, so that I can see the return on our testing effort and keep it matched to risk.
+
+Acceptance criteria:
+- Every quick, full and post-deploy run, deploy and rollback is logged locally
+- Report shows minutes, catches, minutes per catch, change failure rate and minutes saved by tiering
+- Optional AI tokens and cost give cost per deploy and per problem caught
+- Nothing leaves the machine; logging can be turned off
+
+Feature: F14.1 Skill and repository. Delivered Nov 18.",Done,Medium,zero-to-live E14 F14.1
+356,355,Sub-task,S078-T1 Telemetry log and report script,,Done,Medium,zero-to-live E14
+357,355,Sub-task,"S078-T2 Hook into quick, full and post-deploy runs",,Done,Medium,zero-to-live E14
+358,355,Sub-task,S078-T3 Log deploys and rollbacks,,Done,Medium,zero-to-live E14
+359,355,Sub-task,S078-T4 Guide section on reading the numbers,,Done,Medium,zero-to-live E14

@@ -1,6 +1,6 @@
 ---
 name: zero-to-live
-description: End-to-end workflow for taking a website or web app from idea to production. Use when planning, building, testing, securing or deploying a site, especially on Cloudflare Pages with D1 and R2. Covers test tiers (quick checks vs full suite), accessibility and Lighthouse targets, a security checklist, and batched deploys.
+description: End-to-end workflow for taking a website or web app from idea to production. Use when planning, building, testing, securing or deploying a site, especially on Cloudflare Pages with D1 and R2. Covers test tiers (quick checks vs full suite), accessibility and Lighthouse targets, a security checklist, batched deploys, post-deploy health checks with rollback, and a cost and catch log.
 license: MIT
 ---
 
@@ -13,8 +13,9 @@ Preferred stack: Cloudflare Pages (static files plus Pages Functions), D1 (SQLit
 ## The workflow
 
 ```
-1. Plan  ->  2. Build  ->  3. Check (quick)  ->  4. Secure  ->  5. Verify (full)  ->  6. Deploy (batched)
-                 ^________________________________|
+1. Plan -> 2. Build -> 3. Check (quick) -> 4. Secure -> 5. Verify (full) -> 6. Deploy (batched) -> 7. Watch
+              ^_______________________________|                                              |
+              ^_______________________ rollback, then fix forward ____________________________|
 ```
 
 ### 1. Plan
@@ -41,6 +42,9 @@ Run `scripts/run_suite.py` (all suites, fresh local database per suite, one repo
 ### 6. Deploy (batched)
 Every push to the production branch is one build. Collect changes, verify once, deploy once. `scripts/deploy_batch.sh` keeps the count and refuses to deploy a batch that has not passed the full tier. Once others depend on the site, production moves only through a release gate (change from dev, second approval, checks green). Read `references/deploys.md`, including rollback.
 
+### 7. Watch (after every deploy)
+Run `scripts/post_deploy_check.py --wait --rollback`: it waits until the new build is live, checks key pages for status, content, security headers and speed, and rolls back with one command if anything fails. Then read `scripts/telemetry.py report` monthly to see what each tier costs and catches, so test effort keeps matching risk.
+
 ## Key rules
 
 1. **Match test effort to change size.** Quick checks for small edits; the full suite once per deploy batch.
@@ -51,7 +55,7 @@ Every push to the production branch is one build. Collect changes, verify once, 
 6. **Consent before tracking.** Analytics and marketing scripts load only after the visitor opts in.
 7. **Accessibility is a release gate, not a nice-to-have.** Lighthouse Accessibility below 100 blocks the batch.
 8. **Batch deploys and know your budget.** Count builds against the plan limit and say how many are left before deploying.
-9. **Every deploy can be undone in one step.** Know the rollback path before you push.
+9. **Every deploy can be undone in one step.** Know the rollback path before you push, and let the post-deploy check use it.
 10. **Never ship a debug flag.** Development-only bindings (free checkout, disabled limits, disabled MFA) must be honoured only when a dev-mode flag is set, and that flag must never exist in production.
 
 ## Scripts
@@ -64,7 +68,9 @@ Every push to the production branch is one build. Collect changes, verify once, 
 | `scripts/serve_local.sh` | Start `wrangler pages dev` with local D1/R2 and wait for health |
 | `scripts/lighthouse.sh` | Lighthouse on key pages with pass/fail thresholds |
 | `scripts/make_routes.py` | Write `_routes.json` so static files skip Functions |
-| `scripts/deploy_batch.sh` | Count changes, gate on the full tier, deploy once |
+| `scripts/deploy_batch.sh` | Count changes, gate on the full tier, deploy once; `rollback` restores the previous deploy |
+| `scripts/post_deploy_check.py` | After a deploy: wait for the new build, check key pages, roll back on failure |
+| `scripts/telemetry.py` | Local cost and catch log: minutes, catches, deploys, rollbacks, optional AI cost |
 
 Config examples live in `templates/`, including a GitHub Actions release gate in `templates/github/`.
 
@@ -79,4 +85,4 @@ Config examples live in `templates/`, including a GitHub Actions release gate in
 | `references/testing.md` | Choosing what to run; writing suites |
 | `references/accessibility-performance.md` | Lighthouse targets and fixes |
 | `references/security.md` | Any change to auth, roles, data, uploads or payments |
-| `references/deploys.md` | Batching, build budget, dev environment, release gate, rollback |
+| `references/deploys.md` | Batching, build budget, dev environment, release gate, post-deploy check, rollback |

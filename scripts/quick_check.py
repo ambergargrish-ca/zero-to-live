@@ -14,8 +14,14 @@ uncommitted and untracked files. Override the base with --base REF.
   python3 scripts/quick_check.py --dry-run    show what would run
   python3 scripts/quick_check.py --base main  compare against a branch or commit
 Exit code is non-zero if any command fails."""
-import fnmatch, json, subprocess, sys
+import fnmatch, json, subprocess, sys, time
 from pathlib import Path
+
+try:  # cost and catch log (scripts/telemetry.py); optional, never blocks a check
+    sys.dont_write_bytecode = True
+    sys.path.insert(0, str(Path(__file__).resolve().parent)); import telemetry
+except Exception:
+    telemetry = None
 
 
 def git(*args):
@@ -79,11 +85,14 @@ def main():
     if need_server:
         if not cfg.get("server_cmd") or subprocess.run(cfg["server_cmd"], shell=True, cwd=root).returncode:
             print("FAIL  local server did not start"); return 1
-    failed = []
+    failed, started = [], time.time()
     for c in plan:
         print(f"\n$ {c}")
         if subprocess.run(c, shell=True, cwd=root).returncode:
             failed.append(c)
+    if telemetry:
+        telemetry.log("quick", ok=not failed, passed=len(plan) - len(failed), failed=len(failed),
+                      files=len(files), seconds=round(time.time() - started, 1))
     print("\nQUICK CHECK: " + ("all passed" if not failed else f"{len(failed)} failed"))
     for c in failed: print(f"  FAIL  {c}")
     return 1 if failed else 0
