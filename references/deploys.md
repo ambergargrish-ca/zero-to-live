@@ -55,13 +55,15 @@ A small team can meet the change management part of SOC 2 (and stop "quick fixes
    - arrived through a pull request into `main` from `dev`, so it ran on the dev site first,
    - was approved by someone other than the person who opened it, and
    - passed the Quick checks on its head commit.
-   If anything fails, nothing is published and the gate opens an issue saying which change failed and why.
+   If anything fails, nothing is published and the gate opens an issue saying which change failed and why (see `BLOCK_ON` below for a gate that stops only on failed tests).
 3. **A detective control** (`templates/github/guard-production.yml`). The gate moves `live` with the workflow's own token, and pushes made with that token never start other workflows. So any push event on `live` means a person pushed directly, and the workflow opens an issue for review straight away.
 
 Plan for the exceptions in writing, so the gate is never switched off in a hurry:
 
 - **Emergency changes.** A pull request labelled `emergency` may skip the dev and approval steps. It is released, and an issue is opened so a second person reviews it within a set time (for example 2 business days).
 - **Commits that reached main without a pull request.** A manual run of the gate with the commit SHAs and a written reason (at least a sentence) accepts them, and the reason is recorded in an issue.
+- **A blocked release costs more than a late review.** For a solo owner shipping small fixes, set `BLOCK_ON: failed-checks` in the gate. Then only a change that failed the Quick checks stops a release; every other problem (no pull request, not from dev, no second approval, checks missing, a direct push to `live`, which is overwritten from `main`) is released and listed in a "Released with exceptions" issue to review and close. Failed tests still stop everything until fixed through dev. Record the decision, who made it and the date, in the change management policy.
+- **Content written by a scheduled job.** Set `NO_PR_PATHS` to a pattern such as `^(content/drafts/|assets/drafts/)` so commits that only touch those paths need no pull request. Keep the pattern narrow: a commit that touches anything else goes through the normal checks.
 - **Only one approver available.** When the second reviewer is not set up yet, use a time-boxed exception: an end date in the workflow, after which a second approval is required again without anyone remembering to switch it back. The other checks still apply, and every release made without a second approval is listed in an issue for later review. Record who decided it and why in the change management policy.
 
 Add a pull request template that asks what changed, how it was tested on the dev site, whether privacy or security is affected, and the rollback step.

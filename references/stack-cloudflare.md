@@ -85,3 +85,5 @@ Without it, every request (images, CSS) invokes your Function. `scripts/make_rou
 ## Custom domain
 
 Add the domain in the Pages project, Custom domains. If DNS is elsewhere, move nameservers to Cloudflare first. Keep the old host running until the new domain serves the verified build, then remove it.
+
+When the old site ran on a CMS, redirect its stock addresses too, with and without a trailing slash, even if you never linked them: `/contact`, `/contact-us`, `/about-us` and the like are still in search results and old emails. Check your 404 log after launch for more.

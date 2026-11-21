@@ -1,6 +1,6 @@
 # Backlog
 
-14 epics, 25 features, 78 user stories, 223 sub-tasks and 44 bugs. All items are **Done**.
+14 epics, 25 features, 80 user stories, 231 sub-tasks and 45 bugs. All items are **Done**.
 Bugs are listed under the story where they were found and in full in [BUGS.md](BUGS.md).
 
 ## Epics
@@ -10,7 +10,7 @@ Bugs are listed under the story where they were found and in full in [BUGS.md](B
 | [E01 Launch site](#e01-launch-site) | Ship a fast, credible public site so visitors can find courses and register interest. | 2 | 5 | 2 | Nov 5 to 6 |
 | [E02 Brand and design system](#e02-brand-and-design-system) | A consistent, accessible visual identity across site, portal and email. | 2 | 7 | 3 | Nov 6 to 14 |
 | [E03 SEO and AI-engine readiness](#e03-seo-and-ai-engine-readiness) | Be found and cited by search engines and AI assistants. | 2 | 7 | 2 | Nov 6 to 12 |
-| [E04 Hosting, CI and deploys](#e04-hosting-ci-and-deploys) | Free, reliable hosting with controlled, countable releases. | 3 | 7 | 5 | Nov 6 to 15 |
+| [E04 Hosting, CI and deploys](#e04-hosting-ci-and-deploys) | Free, reliable hosting with controlled, countable releases. | 3 | 8 | 5 | Nov 6 to 20 |
 | [E05 Accounts and access](#e05-accounts-and-access) | Safe sign in with the right access for every role. | 2 | 9 | 7 | Nov 6 to 12 |
 | [E06 Learning platform](#e06-learning-platform) | Everything a learner and instructor need to run a live course. | 2 | 5 | 3 | Nov 6 to 10 |
 | [E07 Commerce](#e07-commerce) | Take payment safely and fairly, in the buyer's currency. | 2 | 4 | 3 | Nov 6 to 11 |
@@ -19,7 +19,7 @@ Bugs are listed under the story where they were found and in full in [BUGS.md](B
 | [E10 Privacy and compliance](#e10-privacy-and-compliance) | Collect only what we need, keep it only as long as stated, and prove it. | 2 | 5 | 1 | Nov 10 to 14 |
 | [E11 Quality engineering](#e11-quality-engineering) | Know the product works before anyone else finds out it doesn't. | 1 | 3 | 4 | Nov 6 to 13 |
 | [E12 Security](#e12-security) | Find and fix weaknesses before attackers do. | 1 | 2 | 3 | Nov 6 to 11 |
-| [E13 Performance](#e13-performance) | Fast on a mid-range phone, cheap to serve. | 1 | 1 | 3 | Nov 10 to 11 |
+| [E13 Performance](#e13-performance) | Fast on a mid-range phone, cheap to serve. | 1 | 2 | 4 | Nov 10 to 20 |
 | [E14 Productisation: zero-to-live](#e14-productisation-zero-to-live) | Turn the build's methods into a reusable, citable open-source Claude skill. | 1 | 5 | 0 | Nov 11 to 18 |
 
 ## E01 Launch site
@@ -364,7 +364,7 @@ As a Canadian visitor, I want the site marked for my locale so that search shows
 ## E04 Hosting, CI and deploys
 
 **Goal:** Free, reliable hosting with controlled, countable releases.  
-**Delivered:** Nov 6 to 15
+**Delivered:** Nov 6 to 20
 
 ### F04.1 Platform migration
 
@@ -493,6 +493,25 @@ As a visitor, I want dev and preview sites hidden from search engines and clearl
 
 - [x] S072-T1 Branch check in the build step
 - [x] S072-T2 Environment flag and banner
+
+#### S080  ·  Done  ·  Nov 20
+
+As the product owner, I want the release gate to stop a release only when a change failed its tests, so that small fixes are never held back by a missing step while every skipped step is still reviewed.
+
+**Acceptance criteria**
+
+- [x] A change whose Quick checks failed stops the release, and an issue says which change failed
+- [x] Every other skipped step (no pull request, not from dev, checks missing) is released and listed in a "Released with exceptions" issue
+- [x] Commits that only add content drafts from the scheduled writer need no pull request and are noted in the release log
+- [x] A direct push to the production branch is overwritten from main and listed for review
+- [x] The decision, who made it and the date are recorded in the change management policy
+
+**Sub-tasks**
+
+- [x] S080-T1 Separate failed checks from other problems in the gate
+- [x] S080-T2 Released with exceptions issue
+- [x] S080-T3 Paths that need no pull request
+- [x] S080-T4 Change management policy update
 
 ## E05 Accounts and access
 
@@ -1387,7 +1406,7 @@ As the product owner, I want scoped security audits of the platform so that ever
 ## E13 Performance
 
 **Goal:** Fast on a mid-range phone, cheap to serve.  
-**Delivered:** Nov 10 to 11
+**Delivered:** Nov 10 to 20
 
 ### F13.1 Speed
 
@@ -1414,6 +1433,25 @@ As a learner on a phone, I want pages and the portal to load quickly so that I d
 - B26 (Medium, Performance): Home page blocked the main thread for over 1 second
 - B27 (Medium, Performance): Sign in page jumped on phones
 - B28 (Medium, Accessibility): Accessibility score 96: duplicate image labels and crowded footer links
+- B45 (Low, Functional): Visitor monitoring reported false image errors and inflated load times
+
+#### S079  ·  Done  ·  Nov 20
+
+As a visitor on a phone, I want pages to render without waiting for an outside font service, so that pages appear sooner and fewer outside parties see my visit.
+
+**Acceptance criteria**
+
+- [x] No page requests fonts from another host
+- [x] The two faces used above the fold are preloaded
+- [x] The site and app CSP allow fonts from the site only (`font-src 'self'`)
+- [x] The font service is removed from the privacy policy's providers
+
+**Sub-tasks**
+
+- [x] S079-T1 Font files (latin subset) with their licences under assets/fonts/
+- [x] S079-T2 One @font-face stylesheet and preloads in the shared layout
+- [x] S079-T3 Tighten the CSP for site and app
+- [x] S079-T4 Privacy policy provider list updated
 
 ## E14 Productisation: zero-to-live
 

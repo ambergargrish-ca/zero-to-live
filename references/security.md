@@ -36,7 +36,7 @@ Role checks on obvious admin routes are the easy part. Check one level down as w
 
 ## Headers
 
-- [ ] `Content-Security-Policy` with no `unsafe-eval`, no inline scripts, explicit sources, `frame-ancestors 'none'`, `base-uri 'self'`, `object-src 'none'`, `form-action` restricted.
+- [ ] `Content-Security-Policy` with no `unsafe-eval`, no inline scripts, explicit sources, `frame-ancestors 'none'`, `base-uri 'self'`, `object-src 'none'`, `form-action` restricted. Every outside host you allow is one more party that can serve code or learn who visits, so self-host what you can (fonts above all: then `font-src 'self'`) and remove a host from the CSP and the privacy policy in the same change that stops using it.
 - [ ] `Strict-Transport-Security` (HSTS), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` turning off camera, microphone, geolocation and payment unless needed.
 - [ ] `noindex` on preview deploys and signed-in areas.
 

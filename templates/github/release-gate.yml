@@ -9,6 +9,17 @@
 # A pull request labelled "emergency" may skip 1 and 2. It is released, and an issue is opened for a later review.
 # If anything fails, nothing is published and an issue says why.
 #
+# BLOCK_ON chooses how strict the gate is:
+#   "any" (default): any problem above stops the release.
+#   "failed-checks": only a change whose CHECK_NAME run failed stops the release. Every other problem (no pull
+#   request, not from DEV_BRANCH, no second approval, checks missing or still running, a direct push to the
+#   production branch) is released anyway and listed in a "Released with exceptions" issue for review afterwards.
+#   Use it when a blocked release costs more than a late review, for example a solo owner shipping small fixes.
+#   Failed tests always stop a release in both modes.
+#
+# NO_PR_PATHS (optional, an extended regex): commits that only touch matching paths, such as content drafts written
+# by a scheduled job (for example ^(content/drafts/|assets/drafts/)), are accepted without a pull request and noted.
+#
 # SINGLE_APPROVER_UNTIL (YYYY-MM-DD, optional): a time-boxed exception for teams with only one reviewer. Until that
 # date condition 2 is not enforced, every release without a second approval is listed in an issue, and from the next
 # day a second approval is required again. Leave it empty to always require a second approval.
@@ -52,6 +63,8 @@ jobs:
       DEV_BRANCH: dev
       CHECK_NAME: Quick checks
       SINGLE_APPROVER_UNTIL: ""
+      BLOCK_ON: any
+      NO_PR_PATHS: ""
       TZ: UTC
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +76,8 @@ jobs:
         run: |
           set -euo pipefail
           if [ -n "$EXCEPTION" ] && [ ${#REASON} -lt 10 ]; then echo "An exception needs a reason of at least 10 characters"; exit 1; fi
-          : > problems.txt; : > emergencies.txt; : > released.txt; : > single.txt
+          : > problems.txt; : > failed.txt; : > emergencies.txt; : > released.txt; : > single.txt
+          case "$BLOCK_ON" in any|failed-checks) ;; *) echo "BLOCK_ON must be any or failed-checks"; exit 1 ;; esac
           single=0
           if [ -n "${SINGLE_APPROVER_UNTIL:-}" ]; then
             today=$(date +%F)
@@ -85,6 +99,12 @@ jobs:
             if [[ " $EXCEPTION " == *" $sha "* || " $EXCEPTION " == *" $short "* ]]; then
               echo "- $short accepted as an exception: $REASON" >> emergencies.txt; continue
             fi
+            if [ -n "${NO_PR_PATHS:-}" ]; then
+              files=$(git diff-tree --no-commit-id --name-only -r -m "$sha" | sort -u)
+              if [ -n "$files" ] && ! grep -qvE "$NO_PR_PATHS" <<<"$files"; then
+                echo "- $short only changes paths that need no pull request" >> released.txt; continue
+              fi
+            fi
             pr=$(gh api "repos/$REPO/commits/$sha/pulls" --jq '[.[] | select(.merged_at != null and .base.ref == "main")][0] // empty')
             if [ -z "$pr" ]; then echo "- $short reached main without a pull request" >> problems.txt; continue; fi
             num=$(jq -r .number <<<"$pr"); head=$(jq -r .head.ref <<<"$pr"); author=$(jq -r .user.login <<<"$pr"); headsha=$(jq -r .head.sha <<<"$pr")
@@ -101,15 +121,23 @@ jobs:
               if [ $single = 1 ]; then echo "- #$num ($short) by $author, released without a second approval" >> single.txt
               else echo "- #$num ($short) by $author has no approval from a second person" >> problems.txt; ok=0; fi
             fi
-            [ "$checks" = "success" ] || { echo "- #$num ($short) $CHECK_NAME: $checks" >> problems.txt; ok=0; }
+            if [ "$checks" = "failed" ]; then echo "- #$num ($short) failed $CHECK_NAME" >> failed.txt; ok=0
+            elif [ "$checks" != "success" ]; then echo "- #$num ($short) $CHECK_NAME: $checks" >> problems.txt; ok=0; fi
             [ $ok = 1 ] && echo "- #$num by $author, approved by ${approvers:-nobody (single approver exception)}" >> released.txt
           done
-          if [ -s problems.txt ]; then echo "blocked=1" >> "$GITHUB_OUTPUT"; cat problems.txt; exit 0; fi
+          if [ -s failed.txt ]; then echo "blocked=1" >> "$GITHUB_OUTPUT"; cat failed.txt problems.txt; exit 0; fi
+          if [ -s problems.txt ] && [ "$BLOCK_ON" = "any" ]; then echo "blocked=1" >> "$GITHUB_OUTPUT"; cat problems.txt; exit 0; fi
+          [ -s problems.txt ] && { echo "Released anyway (BLOCK_ON=failed-checks); listed for review:"; cat problems.txt; }
           echo "blocked=0" >> "$GITHUB_OUTPUT"
       - name: Publish (move the production branch to main)
         if: steps.gate.outputs.skip != '1' && steps.gate.outputs.blocked == '0'
         run: |
-          git push origin "HEAD:refs/heads/$PRODUCTION_BRANCH"
+          if [ "$BLOCK_ON" = "failed-checks" ]; then
+            # main is the source of truth: a direct push to the production branch is overwritten and listed for review
+            git push --force origin "HEAD:refs/heads/$PRODUCTION_BRANCH"
+          else
+            git push origin "HEAD:refs/heads/$PRODUCTION_BRANCH"
+          fi
           echo "Released $(git rev-parse --short HEAD)."
           cat released.txt
       - name: Open an issue for emergency changes and exceptions
@@ -126,9 +154,17 @@ jobs:
             gh issue create --repo "$REPO" --title "Released without a second approval $(date -u +%F)" \
               --body "$(printf 'These changes came through %s and passed %s, and were released without a second approval under the exception in force until %s. A second reviewer checks them later, then closes this issue with a comment.\n\n%s\n\nRun: %s/%s/actions/runs/%s' "$DEV_BRANCH" "$CHECK_NAME" "$SINGLE_APPROVER_UNTIL" "$(cat single.txt)" "$GITHUB_SERVER_URL" "$REPO" "$GITHUB_RUN_ID")"
           fi
+      - name: Record changes released with exceptions
+        if: steps.gate.outputs.skip != '1' && steps.gate.outputs.blocked == '0'
+        run: |
+          if [ -s problems.txt ]; then
+            gh issue create --repo "$REPO" --title "Released with exceptions $(date -u +%F): review" \
+              --body "$(printf 'These changes are live but skipped a normal step (dev first, pull request, approval or %s). The release was not blocked because BLOCK_ON is failed-checks. Review them, fix anything wrong through %s, then close this issue with a comment.\n\n%s\n\nRun: %s/%s/actions/runs/%s' "$CHECK_NAME" "$DEV_BRANCH" "$(cat problems.txt)" "$GITHUB_SERVER_URL" "$REPO" "$GITHUB_RUN_ID")"
+          fi
       - name: Blocked, explain why
         if: steps.gate.outputs.blocked == '1'
         run: |
-          gh issue create --repo "$REPO" --title "Release blocked $(date -u +%F): change not approved" \
-            --body "$(printf 'Nothing was published. Production still runs the last approved release.\n\n%s\n\nFix: revert the change on main through a pull request from %s, or get it approved, then run the Release gate again. Only if the change itself is fine, run the Release gate by hand with the commit in exception and a reason.\n\nRun: %s/%s/actions/runs/%s' "$(cat problems.txt)" "$DEV_BRANCH" "$GITHUB_SERVER_URL" "$REPO" "$GITHUB_RUN_ID")"
+          if [ -s failed.txt ]; then title="failed tests"; else title="change not approved"; fi
+          gh issue create --repo "$REPO" --title "Release blocked $(date -u +%F): $title" \
+            --body "$(printf 'Nothing was published. Production still runs the last approved release.\n\n%s\n\nFix: fix or revert the change on main through a pull request from %s, or get it approved, then run the Release gate again. Only if the change itself is fine (for example the tests themselves are wrong), run the Release gate by hand with the commit in exception and a reason.\n\nRun: %s/%s/actions/runs/%s' "$(cat failed.txt problems.txt)" "$DEV_BRANCH" "$GITHUB_SERVER_URL" "$REPO" "$GITHUB_RUN_ID")"
           exit 1

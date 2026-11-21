@@ -52,7 +52,7 @@ Automate with axe-core in the site suite; Lighthouse alone misses issues.
 | Code split | Load dashboard areas on demand |
 | Deferred scripts | Chat, consent, analytics and search scripts load with `defer` |
 | Images | WebP/AVIF, `srcset`, width and height set, lazy below the fold |
-| Fonts | `font-display: swap`, preconnect, two weights at most |
+| Fonts | Self-host them: `.woff2` files under `/assets/fonts/` (latin subset, licence files beside them), one small `@font-face` stylesheet, and `<link rel="preload" as="font" type="font/woff2" crossorigin>` for the one or two faces above the fold. This removes two outside connections and a render-blocking stylesheet from every page, lets the CSP say `font-src 'self'`, and takes the font service off the privacy policy's list of providers. Keep `font-display: swap` and as few weights as the design allows |
 | No layout shift | Reserve space for images, embeds and late content; measure once, not per item |
 | Image to live text | When animated text replaces a logo image, keep the image until `document.fonts.load()` resolves and `document.fonts.check()` passes, and reserve the widest state's width, so no fallback font flashes and nothing shifts |
 | Measured overlays | A canvas or overlay sized from a container that grows after load watches that container with `ResizeObserver`, not only window resize |
@@ -61,8 +61,18 @@ Automate with axe-core in the site suite; Lighthouse alone misses issues.
 | Debounce | Search inputs wait 250 to 300 ms after typing |
 | Indexes | Every query column indexed |
 
+## Speed and error numbers from real visitors
+
+If your own script reports speed (LCP, FCP, TTFB, load) and errors from visitors' browsers, make the numbers honest before anyone acts on them:
+
+- [ ] **Prerendered pages.** With speculation rules, a hovered link starts loading in the background. Measure from `performance.getEntriesByType("navigation")[0].activationStart` (subtract it, floor at 0), or those pages report seconds of load time nobody saw.
+- [ ] **Background tabs.** A page that starts hidden (opened in a new tab) is not measured for speed at all, and paint entries after the page was first hidden are ignored.
+- [ ] **Crawlers and test tools.** Skip `navigator.webdriver` and user agents matching `bot|crawl|spider|headless|lighthouse|pagespeed|preview|scanner|monitor` (except on localhost, so your own tests still run).
+- [ ] **"Failed to load" is not "missing".** A blocked image (data saver, ad or image blocker, a crawler that skips images, a visitor leaving mid-load) fires the same error as a missing file. Before recording one, ask the server once with a same-origin `HEAD` request (`cache: "no-store"`), once per URL, and record it only when the response is not OK. Use the unpatched `fetch` so your own API error tracking does not count the check.
+
 ## Common fixes that moved scores
 
 - **Blocking time over 1 s on a home page** came from measuring many elements in a loop on load. Measure once in a single pass and defer the rest.
 - **Layout shift on a sign-in page** came from a form that changed height after a script loaded. Reserve its final height in CSS.
+- **A render-blocking font stylesheet on every page** came from a hosted font service. Self-hosting the fonts and preloading the two faces above the fold removed it and two outside connections.
 - **Accessibility 96** came from duplicate image labels and crowded footer links. De-duplicate labels and add spacing.

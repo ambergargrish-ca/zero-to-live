@@ -44,8 +44,8 @@ zero-to-live/
 │   └── github/                      release gate and direct push alert workflows
 └── project/                         project management view of the case study
     ├── README.md                    timeline, hierarchy, how to import
-    ├── BACKLOG.md                   14 epics, 78 stories, 223 sub-tasks
-    ├── BUGS.md                      44 bugs with root cause and prevention
+    ├── BACKLOG.md                   14 epics, 80 stories, 231 sub-tasks
+    ├── BUGS.md                      45 bugs with root cause and prevention
     └── backlog.csv                  Jira-importable backlog
 ```
 

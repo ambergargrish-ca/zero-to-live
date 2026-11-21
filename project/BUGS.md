@@ -1,6 +1,6 @@
 # Bug log
 
-44 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
+45 bugs found during the build, all fixed. Each one records the root cause and what now stops it coming back.
 
 ## Summary
 
@@ -8,12 +8,12 @@
 |---|---|
 | High | 5 |
 | Medium | 21 |
-| Low | 18 |
+| Low | 19 |
 
 | Type | Count |
 |---|---|
 | Security | 14 |
-| Functional | 12 |
+| Functional | 13 |
 | UI | 7 |
 | Accessibility | 3 |
 | Operational | 2 |
@@ -26,7 +26,7 @@
 |---|---|
 | Security audit | 7 |
 | Pen test | 5 |
-| Product owner review | 5 |
+| Product owner review | 6 |
 | Lighthouse | 3 |
 | UAT on phone | 3 |
 | Live smoke test | 2 |
@@ -99,6 +99,7 @@
 | B41 | Home hero animation overlapped its own labels and drifted off the grid | Low | UI | S009 | Product owner review | Nov 13 |
 | B43 | Site check flagged links to server-rendered routes as broken | Low | Test | S046 | Test run | Nov 13 |
 | B44 | A replaced team photo kept showing the old picture | Low | Functional | S019 | Product owner review | Nov 15 |
+| B45 | Visitor monitoring reported false image errors and inflated load times | Low | Functional | S051 | Product owner review | Nov 20 |
 
 ## Root cause and prevention
 
@@ -453,3 +454,11 @@
 - **Root cause:** The new photo was saved under the same file names; images are not fingerprinted and are cached for a long time, so browsers and the CDN kept serving the old copy
 - **Fix:** New file names for the new photo, with every page and the JSON-LD reference updated
 - **Prevention:** Building rule: when an image changes, give it a new file name or fingerprint it
+
+### B45 Visitor monitoring reported false image errors and inflated load times
+
+- **Severity / type:** Low / Functional  (epic E13, story S051)
+- **Found by:** Product owner review, Nov 20
+- **Root cause:** The site's own visitor script recorded every failed image load as a missing file, though images blocked by crawlers, blockers or data saver fire the same event; and it timed pages from navigation start, so pages prerendered on hover counted seconds of background loading, and tabs opened in the background were measured too
+- **Fix:** A failed load is recorded only when a same-origin HEAD request confirms the file is missing; crawlers are skipped by user agent; times count from activationStart; pages that start hidden are not measured
+- **Prevention:** Performance checklist: speed and error numbers from real visitors
